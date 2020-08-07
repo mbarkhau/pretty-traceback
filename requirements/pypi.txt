@@ -1,0 +1,18 @@
+# These dependencies are installed using:
+#
+#   pip install --upgrade
+#
+# This list is the default package list. All pure python packages
+# for the production environment at runtime should be listed here.
+# Binary (non-pure) packages may also be listed here, but you
+# should see if there is a conda package that suits your needs.
+#
+# On how to write version specifiers, see
+# https://www.python.org/dev/peps/pep-0440/#id53
+#
+# On how to write environment markers, see
+# https://www.python.org/dev/peps/pep-0508/#environment-markers
+
+typing;python_version<"3.5"
+colorama<0.4,>=0.3.9;python_version<"3.6"
+colorama>=0.4;python_version>="3.6"

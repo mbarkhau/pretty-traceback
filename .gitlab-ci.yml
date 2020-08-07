@@ -1,0 +1,36 @@
+stages:
+  - test
+  - build
+
+
+unit:
+  stage: test
+  image: registry.gitlab.com/mbarkhau/pretty-traceback/base
+  script:
+    - make lint
+    - make mypy
+    - make test
+  coverage: '/^(TOTAL|src).*?(\d+\%)$/'
+  artifacts:
+    reports:
+      junit:
+        - reports/flake8.xml
+        - reports/pytest.xml
+    paths:
+      - reports/testcov/
+      - reports/mypycov/
+  allow_failure: false
+
+
+pages:
+  stage: build
+  script:
+    - mkdir -p public/cov
+    - mkdir -p public/mypycov
+    - cp -r reports/testcov/* public/cov/
+    - cp -r reports/mypycov/* public/mypycov/
+  artifacts:
+    paths:
+      - public
+  only:
+    - master
