@@ -51,6 +51,11 @@ jobs:
     - name: make conda
       run: make conda
 
+    - name: debug make fmt
+      run: make fmt
+    - name: debug diff
+      run: git diff
+
     - name: make lint
       run: make lint
     - name: make mypy
