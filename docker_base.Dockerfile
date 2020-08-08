@@ -9,7 +9,7 @@
 
 FROM registry.gitlab.com/mbarkhau/bootstrapit/env_builder AS builder
 
-# gcc required for cmarkgfm
+# gcc required for cmarkgfm on python3.8
 # https://github.com/theacodes/cmarkgfm/issues/22
 RUN apt-get update
 RUN apt-get install -y gcc
@@ -40,7 +40,7 @@ ADD scripts/ scripts/
 ADD makefile.bootstrapit.make makefile.bootstrapit.make
 ADD makefile makefile
 
-RUN make install
+RUN make conda
 
 RUN rm -f /root/.ssh/id_rsa
 

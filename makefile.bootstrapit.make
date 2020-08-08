@@ -186,18 +186,18 @@ help:
 
 	@if [[ ! -f $(DEV_ENV_PY) ]]; then \
 	echo "Missing python interpreter at $(DEV_ENV_PY) !"; \
-	echo "You problably want to install first:"; \
+	echo "You problably want to first setup the virtual environments:"; \
 	echo ""; \
-	echo "    make install"; \
+	echo "    make conda"; \
 	echo ""; \
 	exit 0; \
 	fi
 
 	@if [[ ! -f $(CONDA_BIN) ]]; then \
 	echo "No conda installation found!"; \
-	echo "You problably want to install first:"; \
+	echo "You problably want to first setup the virtual environments:"; \
 	echo ""; \
-	echo "    make install"; \
+	echo "    make conda"; \
 	echo ""; \
 	exit 0; \
 	fi
@@ -281,14 +281,9 @@ force:
 	rm -rf vendor/__pycache__/
 
 
-## Setup python virtual environments
-.PHONY: install
-install: build/deps.txt
-
-
-## Update dependencies (pip install -U ...)
-.PHONY: update
-update: build/deps.txt
+## Create/Update python virtual environments
+.PHONY: conda
+conda: build/deps.txt
 
 
 ## Install git pre-push hooks
@@ -355,8 +350,8 @@ lint_pylint:
 
 
 ## Run pylint-ignore --update-ignorefile.
-.PHONY: pylint_update_ignorefile
-pylint_update_ignorefile:
+.PHONY: pylint_ignore
+pylint_ignore:
 	$(DEV_ENV)/bin/pylint-ignore --rcfile=setup.cfg \
 		src/ test/ --update-ignorefile
 
@@ -425,9 +420,6 @@ test:
 	@rm -rf "test/__pycache__";
 
 
-## -- Helpers --
-
-
 ## Run import sorting on src/ and test/
 .PHONY: fmt_isort
 fmt_isort:
@@ -453,6 +445,9 @@ fmt_sjfmt:
 ## Run code formatters
 .PHONY: fmt
 fmt: fmt_isort fmt_sjfmt
+
+
+## -- Helpers --
 
 
 ## Shortcut for make fmt lint mypy devtest test
