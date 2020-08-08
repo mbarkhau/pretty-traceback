@@ -18,8 +18,10 @@ jobs:
     - name: Cache Virtualenvs
       uses: actions/cache@v1
       with:
-        path: ~/miniconda3
-        key: ${{ runner.OS }}-conda-env-cache-${{ hashFiles('requirements/*.txt') }}
+        path: |
+          ~/miniconda3
+          build/*.txt
+        key: ${{ runner.OS }}-conda-env-cache-${{ hashFiles('requirements/*.txt', 'setup.py', 'makefile*') }}
 
     - name: make conda
       run: make conda
@@ -41,8 +43,10 @@ jobs:
     - name: Cache Virtualenvs
       uses: actions/cache@v1
       with:
-        path: ~/miniconda3
-        key: ${{ runner.OS }}-conda-env-cache-${{ hashFiles('requirements/*.txt') }}
+        path: |
+          ~/miniconda3
+          build/*.txt
+        key: ${{ runner.OS }}-conda-env-cache-${{ hashFiles('requirements/*.txt', 'setup.py', 'makefile*') }}
 
     - name: make conda
       run: make conda
