@@ -13,7 +13,7 @@ import subprocess as sp
 
 import colorama
 
-__version__ = "2020.1001"
+__version__ = "2020.1002"
 
 
 def _get_terminal_width() -> int:
