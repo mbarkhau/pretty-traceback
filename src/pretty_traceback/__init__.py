@@ -178,11 +178,11 @@ def _rows_to_lines(section_rows: SectionRows, color: bool = False) -> typ.Iterab
 
     for (_, prefix), rows in sorted(section_rows.items()):
         yield ""
-        yield fmt_module.format(prefix)
+        yield "  Path: " + fmt_module.format(prefix)
 
         for module, call, lineno, context in rows:
             parts = (
-                "  ",
+                "    ",
                 fmt_module.format(module),
                 "  ",
                 fmt_call.format(call),
@@ -197,13 +197,13 @@ def _rows_to_lines(section_rows: SectionRows, color: bool = False) -> typ.Iterab
 def format_entries(
     exc_name: str, exc_message: str, entries: typ.List[Entry], color: bool = False
 ) -> str:
-    ctx = _entries_to_sections(entries)
-    _update_padding(ctx)
-    lines = list(_rows_to_lines(ctx.section_rows, color))
-
     fmt_error  = FMT_ERROR if color else "{0}"
     error_line = fmt_error.format(exc_name) + ": " + exc_message
 
+    ctx = _entries_to_sections(entries)
+    _update_padding(ctx)
+    lines = ["Traceback (most recent call last):"]
+    lines.extend(_rows_to_lines(ctx.section_rows, color))
     lines.append("")
     lines.append(error_line)
     return os.linesep.join(lines) + os.linesep

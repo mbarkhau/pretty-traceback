@@ -1,6 +1,29 @@
-# Pretty Traceback
+# [Pretty Traceback][repo_ref]
 
 Human readable stacktraces for Python.
+
+Project/Repo:
+
+[![MIT License][license_img]][license_ref]
+[![Supported Python Versions][pyversions_img]][pyversions_ref]
+[![PyCalVer v202008.0001-alpha][version_img]][version_ref]
+[![PyPI Version][pypi_img]][pypi_ref]
+[![PyPI Downloads][downloads_img]][downloads_ref]
+
+Code Quality/CI:
+
+[![Build Status][build_img]][build_ref]
+[![Type Checked with mypy][mypy_img]][mypy_ref]
+[![Code Coverage][codecov_img]][codecov_ref]
+[![Code Style: sjfmt][style_img]][style_ref]
+
+
+|                 Name                |        role       |  since  | until |
+|-------------------------------------|-------------------|---------|-------|
+| Manuel Barkhau (mbarkhau@gmail.com) | author/maintainer | 2020-08 | -     |
+
+
+## Overview
 
 Pretty Traceback groups together what belongs together, rather than showing each part of the traceback as if they were all an equally likely source of a bug. This grouping lets you see, what code relates to frameworks or libraries and what code belong to **your project**, which is of course much more likely to be where the **root cause** of the issue is.
 
@@ -36,7 +59,7 @@ TypeError: no loader for this environment specified
 
 Instead of this 🤮
 
-```
+```python
 Traceback (most recent call last):
   File "/home/user/venvs/py38/bin/myproject", line 12, in <module>
     sys.exit(cli())
@@ -102,3 +125,32 @@ Pretty Traceback is heavilly inspired by the backtrace modile by nir0s.
 - https://github.com/laurb9/rich-traceback
 - https://github.com/staticshock/colored-traceback.py
 - https://github.com/chillaranand/ptb
+
+[repo_ref]: https://gitlab.com/mbarkhau/pretty-traceback
+
+[build_img]: https://gitlab.com/mbarkhau/pretty-traceback/badges/master/pipeline.svg
+[build_ref]: https://gitlab.com/mbarkhau/pretty-traceback/pipelines
+
+[codecov_img]: https://gitlab.com/mbarkhau/pretty-traceback/badges/master/coverage.svg
+[codecov_ref]: https://mbarkhau.gitlab.io/pretty-traceback/cov
+
+[license_img]: https://img.shields.io/badge/License-MIT-blue.svg
+[license_ref]: https://gitlab.com/mbarkhau/pretty-traceback/blob/master/LICENSE
+
+[mypy_img]: https://img.shields.io/badge/mypy-checked-green.svg
+[mypy_ref]: https://mbarkhau.gitlab.io/pretty-traceback/mypycov
+
+[style_img]: https://img.shields.io/badge/code%20style-%20sjfmt-f71.svg
+[style_ref]: https://gitlab.com/mbarkhau/straitjacket/
+
+[pypi_img]: https://img.shields.io/badge/PyPI-wheels-green.svg
+[pypi_ref]: https://pypi.org/project/pretty-traceback/#files
+
+[downloads_img]: https://pepy.tech/badge/pretty-traceback/month
+[downloads_ref]: https://pepy.tech/project/pretty-traceback
+
+[version_img]: https://img.shields.io/static/v1.svg?label=PyCalVer&message=v202008.0001-alpha&color=blue
+[version_ref]: https://pypi.org/project/pycalver/
+
+[pyversions_img]: https://img.shields.io/pypi/pyversions/pretty-traceback.svg
+[pyversions_ref]: https://pypi.python.org/pypi/pretty-traceback

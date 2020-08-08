@@ -9,6 +9,11 @@
 
 FROM registry.gitlab.com/mbarkhau/bootstrapit/env_builder AS builder
 
+# gcc required for cmarkgfm
+# https://github.com/theacodes/cmarkgfm/issues/22
+RUN apt-get update
+RUN apt-get install -y gcc
+
 RUN mkdir /root/.ssh/ && \
     ssh-keyscan gitlab.com >> /root/.ssh/known_hosts && \
     ssh-keyscan registry.gitlab.com >> /root/.ssh/known_hosts

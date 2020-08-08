@@ -14,34 +14,6 @@ import pytest
 
 import pretty_traceback
 
-
-@pytest.fixture
-def captrace():
-    hook = pretty_traceback.init_excepthook(color=False)
-    yield
-
-
-def _pong(depth):
-    _ping(depth + 1)
-
-
-def _ping(depth=0):
-    if depth > 2:
-        sp.check_output(["command_that", "doesnt", "exist"])
-
-    _pong(depth + 1)
-
-
-def test_pingpong(captrace):
-    sched1 = sched.scheduler(time.time, time.sleep)
-    sched1.enter(0.1, 1, _ping, ())
-    sched2 = sched.scheduler(time.time, time.sleep)
-    sched2.enter(0.1, 1, sched1.run, ())
-    sched3 = sched.scheduler(time.time, time.sleep)
-    sched3.enter(0.1, 1, sched2.run, ())
-    sched3.run()
-
-
 FIXTURE = """
 Traceback (most recent call last):
   File "/home/user/venvs/py38/bin/myproject", line 12, in <module>
@@ -71,3 +43,36 @@ Traceback (most recent call last):
   File "<template>", line 56, in top-level template code
 TypeError: no loader for this environment specified
 """
+
+# @pytest.fixture
+# def captrace():
+#     hook = pretty_traceback.init_excepthook(color=False)
+#     hook_wrapper
+#     sys.excepthook = hook_wrapper
+#     yield
+
+
+# def _pong(depth):
+#     _ping(depth + 1)
+
+
+# def _ping(depth=0):
+#     if depth > 2:
+#         try:
+#             sp.check_output(["command_that", "doesnt", "exist"])
+#         except Exception as ex:
+#             new_ex = Exception("Wrapping Exception")
+#             new_ex.__cause__ = ex
+#             raise new_ex
+
+#     _pong(depth + 1)
+
+
+# def test_pingpong(captrace):
+#     sched1 = sched.scheduler(time.time, time.sleep)
+#     sched1.enter(0.1, 1, _ping, ())
+#     sched2 = sched.scheduler(time.time, time.sleep)
+#     sched2.enter(0.1, 1, sched1.run, ())
+#     sched3 = sched.scheduler(time.time, time.sleep)
+#     sched3.enter(0.1, 1, sched2.run, ())
+#     sched3.run()
