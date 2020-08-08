@@ -46,10 +46,3 @@ jobs:
 
     - name: make conda
       run: make conda
-
-    - name: make lint
-      run: make lint
-    - name: make mypy
-      run: make mypy
-    - name: make test
-      run: make test
