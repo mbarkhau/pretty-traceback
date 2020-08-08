@@ -1,0 +1,39 @@
+name: Testing CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  build-ubuntu:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: make conda
+      run: make conda
+    - name: make lint
+      run: make lint
+    - name: make mypy
+      run: make mypy
+    - name: make test
+      run: make test
+
+  build-macos:
+
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: make conda
+      run: make conda
+    - name: make lint
+      run: make lint
+    - name: make mypy
+      run: make mypy
+    - name: make test
+      run: make test
