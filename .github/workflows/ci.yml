@@ -14,8 +14,16 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
+    - name: Cache Virtualenvs
+      uses: actions/cache@v1
+      with:
+        path: ~/miniconda3
+        key: ${{ runner.OS }}-conda-env-cache-${{ hashFiles('requirements/*.txt') }}
+
     - name: make conda
       run: make conda
+
     - name: make lint
       run: make lint
     - name: make mypy
@@ -29,8 +37,16 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
+    - name: Cache Virtualenvs
+      uses: actions/cache@v1
+      with:
+        path: ~/miniconda3
+        key: ${{ runner.OS }}-conda-env-cache-${{ hashFiles('requirements/*.txt') }}
+
     - name: make conda
       run: make conda
+
     - name: make lint
       run: make lint
     - name: make mypy
