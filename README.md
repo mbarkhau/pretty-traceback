@@ -1,3 +1,10 @@
+<div align="center">
+<p align="center">
+  <img alt="logo" src="https://gitlab.com/mbarkhau/pretty-traceback/-/raw/master/logo.svg">
+</p>
+</div>
+
+
 # [Pretty Traceback][repo_ref]
 
 Human readable stacktraces for Python.
@@ -12,7 +19,8 @@ Project/Repo:
 
 Code Quality/CI:
 
-[![Build Status][build_img]][build_ref]
+[![GitHub Build Status][github_build_img]][github_build_ref]
+[![GitLab Build Status][gitlab_build_img]][gitlab_build_ref]
 [![Type Checked with mypy][mypy_img]][mypy_ref]
 [![Code Coverage][codecov_img]][codecov_ref]
 [![Code Style: sjfmt][style_img]][style_ref]
@@ -128,8 +136,11 @@ Pretty Traceback is heavilly inspired by the backtrace modile by nir0s.
 
 [repo_ref]: https://gitlab.com/mbarkhau/pretty-traceback
 
-[build_img]: https://gitlab.com/mbarkhau/pretty-traceback/badges/master/pipeline.svg
-[build_ref]: https://gitlab.com/mbarkhau/pretty-traceback/pipelines
+[github_build_img]: https://github.com/mbarkhau/pretty-traceback/workflows/CI/badge.svg
+[github_build_ref]: https://github.com/mbarkhau/pretty-traceback/actions?query=workflow%3ACI
+
+[gitlab_build_img]: https://gitlab.com/mbarkhau/pretty-traceback/badges/master/pipeline.svg
+[gitlab_build_ref]: https://gitlab.com/mbarkhau/pretty-traceback/pipelines
 
 [codecov_img]: https://gitlab.com/mbarkhau/pretty-traceback/badges/master/coverage.svg
 [codecov_ref]: https://mbarkhau.gitlab.io/pretty-traceback/cov
