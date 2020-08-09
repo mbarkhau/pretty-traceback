@@ -24,7 +24,6 @@ jobs:
         key: ${{ runner.OS }}-conda-cache-${{ hashFiles('requirements/*.txt', 'setup.py', 'makefile*') }}
         restore-keys: |
           ${{ runner.OS }}-conda-cache-${{ hashFiles('requirements/*.txt', 'setup.py', 'makefile*') }}
-          ${{ runner.OS }}-conda-cache-
 
     - name: make conda
       run:
@@ -57,7 +56,6 @@ jobs:
         key: ${{ runner.OS }}-conda-cache-${{ hashFiles('requirements/*.txt', 'setup.py', 'makefile*') }}
         restore-keys: |
           ${{ runner.OS }}-conda-cache-${{ hashFiles('requirements/*.txt', 'setup.py', 'makefile*') }}
-          ${{ runner.OS }}-conda-cache-
 
     - name: make conda
       run:

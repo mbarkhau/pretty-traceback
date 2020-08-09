@@ -18,7 +18,6 @@ flake8-docstrings
 flake8-builtins
 flake8-comprehensions
 flake8-junit-report
-pylint
 pylint-ignore>=2020.1013
 mypy
 # pylint doesn't support isort>=5 for now
