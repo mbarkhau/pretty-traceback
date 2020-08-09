@@ -1,4 +1,4 @@
-name: Testing CI
+name: CI
 
 on:
   push:
@@ -21,15 +21,23 @@ jobs:
         path: |
           ~/miniconda3
           build/*.txt
-        key: ${{ runner.OS }}-conda-env-cache-${{ hashFiles('requirements/*.txt', 'setup.py', 'makefile*') }}
+        key: ${{ runner.OS }}-conda-cache-${{ hashFiles('requirements/*.txt', 'setup.py', 'makefile*') }}
+        restore-keys: |
+          ${{ runner.OS }}-conda-cache-${{ hashFiles('requirements/*.txt', 'setup.py', 'makefile*') }}
+          ${{ runner.OS }}-conda-cache-
 
     - name: make conda
-      run: make conda
+      run:
+        if [[ -e build/envs.txt ]]; then touch build/envs.txt; fi;
+        if [[ -e build/deps.txt ]]; then touch build/deps.txt; fi;
+        make conda
 
     - name: make lint
       run: make lint
+
     - name: make mypy
       run: make mypy
+
     - name: make test
       run: make test
 
@@ -46,19 +54,22 @@ jobs:
         path: |
           ~/miniconda3
           build/*.txt
-        key: ${{ runner.OS }}-conda-env-cache-${{ hashFiles('requirements/*.txt', 'setup.py', 'makefile*') }}
+        key: ${{ runner.OS }}-conda-cache-${{ hashFiles('requirements/*.txt', 'setup.py', 'makefile*') }}
+        restore-keys: |
+          ${{ runner.OS }}-conda-cache-${{ hashFiles('requirements/*.txt', 'setup.py', 'makefile*') }}
+          ${{ runner.OS }}-conda-cache-
 
     - name: make conda
-      run: make conda
-
-    - name: debug make fmt
-      run: make fmt
-    - name: debug diff
-      run: git diff
+      run:
+        if [[ -e build/envs.txt ]]; then touch build/envs.txt; fi;
+        if [[ -e build/deps.txt ]]; then touch build/deps.txt; fi;
+        make conda
 
     - name: make lint
-      run: make lint || true
+      run: make lint
+
     - name: make mypy
-      run: make mypy || true
+      run: make mypy
+
     - name: make test
-      run: make test || true
+      run: make test

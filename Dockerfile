@@ -16,4 +16,4 @@ ADD scripts/exit_0_if_empty.py scripts/exit_0_if_empty.py
 
 ENV PYTHONPATH="src/:vendor/"
 
-CMD make lint test
+CMD make lint mypy test

@@ -40,6 +40,12 @@ ADD scripts/ scripts/
 ADD makefile.bootstrapit.make makefile.bootstrapit.make
 ADD makefile makefile
 
+# install envs (relatively stable)
+ADD requirements/conda.txt requirements/conda.txt
+RUN make build/envs.txt
+
+# install python package dependencies (change more often)
+ADD requirements/ requirements/
 RUN make conda
 
 RUN rm -f /root/.ssh/id_rsa
