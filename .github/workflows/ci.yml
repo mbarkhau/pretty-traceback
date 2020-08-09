@@ -15,8 +15,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Cache Virtualenvs
-      uses: actions/cache@v1
+    - name: Cache Conda Envs
+      uses: actions/cache@v2
       with:
         path: |
           ~/miniconda3
@@ -40,8 +40,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Cache Virtualenvs
-      uses: actions/cache@v1
+    - name: Cache Conda Envs
+      uses: actions/cache@v2
       with:
         path: |
           ~/miniconda3

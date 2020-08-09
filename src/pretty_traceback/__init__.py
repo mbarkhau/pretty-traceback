@@ -114,12 +114,11 @@ def _entries_to_sections(entries: typ.Iterable[Entry]) -> SectionContext:
             prev_prefix = prefix
 
         module_padding = lbs_module.get(section_key, 0)
-        lbs_module[section_key] = max(module_padding, len(module_rel_path))
-
-        call_padding = lbs_call.get(section_key, 0)
-        lbs_call[section_key] = max(call_padding, len(call))
-
+        call_padding   = lbs_call.get(section_key, 0)
         lineno_padding = lbs_lineno.get(section_key, 0)
+
+        lbs_module[section_key] = max(module_padding, len(module_rel_path))
+        lbs_call[section_key] = max(call_padding, len(call))
         lbs_lineno[section_key] = max(lineno_padding, len(lineno))
 
         if section_key not in section_rows:
