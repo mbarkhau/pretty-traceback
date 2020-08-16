@@ -32,40 +32,13 @@ In other words, get this 😍
 
 <div align="center">
 <p align="center">
-  <img alt="logo" src="https://gitlab.com/mbarkhau/pretty-traceback/-/raw/master/screenshot.png">
+  <img alt="logo" src="https://gitlab.com/mbarkhau/pretty-traceback/-/raw/master/example_tb2.png">
 </p>
 </div>
 
-
-```python
-/home/user/venvs/py38
-  /bin/myproject  <module>                  12: sys.exit(cli())
-
-/home/user/venvs/py38/lib/python3.8/site-packages
-  /click/core.py  __call__  829: return self.main(*args, **kwargs)
-  /click/core.py  main      782: rv = self.invoke(ctx)
-  /click/core.py  invoke   1259: return _process_result(sub_ctx.command.invoke(sub_ctx))
-  /click/core.py  invoke   1066: return ctx.invoke(self.callback, **ctx.params)
-  /click/core.py  invoke    610: return callback(*args, **kwargs)
-
-/home/user/foss/myproject/src/myproject
-  /src/myproject/cli.py       build              160: lp_gen_docs.gen_html(built_ctx, html_dir)
-  /src/myproject/gen_docs.py  gen_html           294: wrapped_html = wrap_content_html(content_html, 'screen', meta, toc)
-  /src/myproject/gen_docs.py  wrap_content_html  237: result = tmpl.render(**ctx)
-
-/home/user/venvs/py38/lib/python3.8/site-packages
-  /jinja2/environment.py  render            1090: self.environment.handle_exception()
-  /jinja2/environment.py  handle_exception   832: reraise(*rewrite_traceback_stack(source=source))
-  /jinja2/_compat.py      reraise             28: raise value.with_traceback(tb)
-
-<template>                   top-level template code   56:
-
-TypeError: no loader for this environment specified
-```
-
 Instead of this 🤮
 
-```python
+```
 Traceback (most recent call last):
   File "/home/user/venvs/py38/bin/myproject", line 12, in <module>
     sys.exit(cli())
@@ -95,6 +68,20 @@ Traceback (most recent call last):
 TypeError: no loader for this environment specified
 ```
 
+Some more examples.
+
+<div align="center">
+<p align="center">
+  <img alt="logo" src="https://gitlab.com/mbarkhau/pretty-traceback/-/raw/master/example_tb0.png">
+</p>
+</div>
+
+<div align="center">
+<p align="center">
+  <img alt="logo" src="https://gitlab.com/mbarkhau/pretty-traceback/-/raw/master/example_tb1.png">
+</p>
+</div>
+
 
 ## Usage
 
@@ -120,13 +107,9 @@ except ImportError:
     pass    # no need to fail because of missing dev dependency
 ```
 
-
 ## Cavets
 
-TODO:
-- The hook is only installed if the existing hook is the default
-- If there is any bug in the stacktrace formatting, the default
-  except hook is used as a fallback.
+The hook is only installed if the existing hook is the default. Any existing hooks that were installed before the call of `pretty_traceback.install` will be left in place.
 
 
 ## Alternatives
