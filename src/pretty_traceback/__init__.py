@@ -7,7 +7,7 @@
 from .hook import install
 from .hook import uninstall
 
-__version__ = "2020.1003"
+__version__ = "2020.1004"
 
 
 __all__ = [
