@@ -24,9 +24,7 @@ include makefile.bootstrapit.make
 
 ## -- Extra/Custom/Project Specific Tasks --
 
-## Start the development http server in debug mode
-##    This is just to illustrate how to add your
-##    extra targets outside of the main makefile.
-.PHONY: serve
-serve:
-	echo "Not Implemented"
+## Run testcase to show formatting
+.PHONY: demo
+demo:
+	$(DEV_ENV_PY) test/test_formatting.py

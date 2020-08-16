@@ -1,10 +1,3 @@
-<div align="center">
-<p align="center">
-  <img alt="logo" src="https://gitlab.com/mbarkhau/pretty-traceback/-/raw/master/logo.svg">
-</p>
-</div>
-
-
 # [Pretty Traceback][repo_ref]
 
 Human readable stacktraces for Python.
@@ -33,32 +26,37 @@ Code Quality/CI:
 
 ## Overview
 
-Pretty Traceback groups together what belongs together, rather than showing each part of the traceback as if they were all an equally likely source of a bug. This grouping lets you see, what code relates to frameworks or libraries and what code belong to **your project**, which is of course much more likely to be where the **root cause** of the issue is.
+Pretty Traceback groups together what belongs together, adds coloring and alignment. All of this makes it easier for you to see patterns and filter out the signal from the noise. This tabular format is best viewed in a wide terminal.
 
 In other words, get this 😍
 
-<!-- TODO: replace with svg, because colouring in Markdown does not reflect output on the terminal. -->
+<div align="center">
+<p align="center">
+  <img alt="logo" src="https://gitlab.com/mbarkhau/pretty-traceback/-/raw/master/screenshot.png">
+</p>
+</div>
+
 
 ```python
-/home/user/venvs/py38/bin/myproject
-                             <module>                  12: sys.exit(cli())
+/home/user/venvs/py38
+  /bin/myproject  <module>                  12: sys.exit(cli())
 
-/home/user/venvs/py38/lib/python3.8/site-packages/
-  click/core.py  __call__  829: return self.main(*args, **kwargs)
-  click/core.py  main      782: rv = self.invoke(ctx)
-  click/core.py  invoke   1259: return _process_result(sub_ctx.command.invoke(sub_ctx))
-  click/core.py  invoke   1066: return ctx.invoke(self.callback, **ctx.params)
-  click/core.py  invoke    610: return callback(*args, **kwargs)
+/home/user/venvs/py38/lib/python3.8/site-packages
+  /click/core.py  __call__  829: return self.main(*args, **kwargs)
+  /click/core.py  main      782: rv = self.invoke(ctx)
+  /click/core.py  invoke   1259: return _process_result(sub_ctx.command.invoke(sub_ctx))
+  /click/core.py  invoke   1066: return ctx.invoke(self.callback, **ctx.params)
+  /click/core.py  invoke    610: return callback(*args, **kwargs)
 
-/home/user/foss/myproject/src/myproject/
-  src/myproject/cli.py       build              160: lp_gen_docs.gen_html(built_ctx, html_dir)
-  src/myproject/gen_docs.py  gen_html           294: wrapped_html = wrap_content_html(content_html, 'screen', meta, toc)
-  src/myproject/gen_docs.py  wrap_content_html  237: result = tmpl.render(**ctx)
+/home/user/foss/myproject/src/myproject
+  /src/myproject/cli.py       build              160: lp_gen_docs.gen_html(built_ctx, html_dir)
+  /src/myproject/gen_docs.py  gen_html           294: wrapped_html = wrap_content_html(content_html, 'screen', meta, toc)
+  /src/myproject/gen_docs.py  wrap_content_html  237: result = tmpl.render(**ctx)
 
-/home/user/venvs/py38/lib/python3.8/site-packages/
-  jinja2/environment.py  render            1090: self.environment.handle_exception()
-  jinja2/environment.py  handle_exception   832: reraise(*rewrite_traceback_stack(source=source))
-  jinja2/_compat.py      reraise             28: raise value.with_traceback(tb)
+/home/user/venvs/py38/lib/python3.8/site-packages
+  /jinja2/environment.py  render            1090: self.environment.handle_exception()
+  /jinja2/environment.py  handle_exception   832: reraise(*rewrite_traceback_stack(source=source))
+  /jinja2/_compat.py      reraise             28: raise value.with_traceback(tb)
 
 <template>                   top-level template code   56:
 
@@ -121,6 +119,14 @@ try:
 except ImportError:
     pass    # no need to fail because of missing dev dependency
 ```
+
+
+## Cavets
+
+TODO:
+- The hook is only installed if the existing hook is the default
+- If there is any bug in the stacktrace formatting, the default
+  except hook is used as a fallback.
 
 
 ## Alternatives
