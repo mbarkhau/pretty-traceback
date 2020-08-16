@@ -23,98 +23,57 @@ The recommended approach to using `pylint-ignore` is:
 
 # Overview
 
- - [W0611: unused-import (6x)](#w0611-unused-import)
+ - [W0511: fixme (3x)](#w0511-fixme)
 
 
-# W0611: unused-import
+# W0511: fixme
 
-## File test/test_parsing.py - Line 8 - W0611 (unused-import)
+## File src/pretty_traceback/parsing.py - Line 12 - W0511 (fixme)
 
-- `message: Unused import sys`
+- `message: TODO (mb 2020-08-12): path/module with doublequotes in them.`
 - `author : Manuel Barkhau <mbarkhau@gmail.com>`
-- `date   : 2020-08-08T09:32:01`
+- `date   : 2020-08-16T21:13:16`
 
 ```
-   6: from __future__ import unicode_literals
-   7:
->  8: import sys
-   9: import time
-  10: import sched
-```
-
-
-## File test/test_parsing.py - Line 9 - W0611 (unused-import)
-
-- `message: Unused import time`
-- `author : Manuel Barkhau <mbarkhau@gmail.com>`
-- `date   : 2020-08-08T09:32:01`
-
-```
-   7:
-   8: import sys
->  9: import time
-  10: import sched
-  11: import subprocess as sp
-```
-
-
-## File test/test_parsing.py - Line 10 - W0611 (unused-import)
-
-- `message: Unused import sched`
-- `author : Manuel Barkhau <mbarkhau@gmail.com>`
-- `date   : 2020-08-08T09:32:01`
-
-```
-   8: import sys
-   9: import time
-> 10: import sched
-  11: import subprocess as sp
-  12:
-```
-
-
-## File test/test_parsing.py - Line 11 - W0611 (unused-import)
-
-- `message: Unused subprocess imported as sp`
-- `author : Manuel Barkhau <mbarkhau@gmail.com>`
-- `date   : 2020-08-08T09:32:01`
-
-```
-   9: import time
-  10: import sched
-> 11: import subprocess as sp
-  12:
-  13: import pytest
-```
-
-
-## File test/test_parsing.py - Line 13 - W0611 (unused-import)
-
-- `message: Unused import pytest`
-- `author : Manuel Barkhau <mbarkhau@gmail.com>`
-- `date   : 2020-08-08T09:32:01`
-
-```
-  11: import subprocess as sp
-  12:
-> 13: import pytest
+  10: import pretty_traceback.common as com
+  11:
+> 12: # TODO (mb 2020-08-12): path/module with doublequotes in them.
+  13: #   Not even sure what python does with that.
   14:
-  15: import pretty_traceback
 ```
 
 
-## File test/test_parsing.py - Line 15 - W0611 (unused-import)
+## File test/test_formatting.py - Line 105 - W0511 (fixme)
 
-- `message: Unused import pretty_traceback`
+- `message: TODO (mb 2020-08-14): compare to test.fixture.CHAINED_TRACEBACK`
 - `author : Manuel Barkhau <mbarkhau@gmail.com>`
-- `date   : 2020-08-08T09:32:01`
+- `date   : 2020-08-16T21:13:16`
 
 ```
-  13: import pytest
-  14:
-> 15: import pretty_traceback
-  16:
-  17: FIXTURE = """
+   97: def test_pingpong():
+  ...
+  103:         tb_str = formatting.exc_to_traceback_str(exc_value, traceback, color=False)
+  104:         assert isinstance(tb_str, str)
+> 105:         # TODO (mb 2020-08-14): compare to test.fixture.CHAINED_TRACEBACK
+  106:
+  107:
+```
+
+
+## File src/pretty_traceback/formatting.py - Line 124 - W0511 (fixme)
+
+- `message: TODO (mb 2020-08-16): more better paths`
+- `author : Manuel Barkhau <mbarkhau@gmail.com>`
+- `date   : 2020-08-16T21:13:16`
+
+```
+  107: def _init_aliases(entry_paths: typ.List[str]) -> AliasPrefixes:
+  ...
+  122:             continue
+  123:
+> 124:         # TODO (mb 2020-08-16): more better paths
+  125:         if path.endswith("site-packages"):
+  126:             alias = "<sitepkg>"
 ```
 
 

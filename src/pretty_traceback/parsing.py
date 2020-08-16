@@ -11,7 +11,6 @@ import pretty_traceback.common as com
 
 # TODO (mb 2020-08-12): path/module with doublequotes in them.
 #   Not even sure what python does with that.
-# TODO (mb 2020-08-12): stacktraces with cython
 
 # https://regex101.com/r/GpKtqR/1
 LOCATION_PATTERN = r"""
