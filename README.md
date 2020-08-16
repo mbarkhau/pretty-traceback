@@ -107,14 +107,12 @@ except ImportError:
     pass    # no need to fail because of missing dev dependency
 ```
 
-## Cavets
-
-The hook is only installed if the existing hook is the default. Any existing hooks that were installed before the call of `pretty_traceback.install` will be left in place.
+Note, that the hook is only installed if the existing hook is the default. Any existing hooks that were installed before the call of `pretty_traceback.install` will be left in place.
 
 
 ## Alternatives
 
-Pretty Traceback is heavilly inspired by the backtrace modile by nir0s.
+Pretty Traceback is heavily inspired by the backtrace module by nir0s.
 
 - https://github.com/nir0s/backtrace
 - https://github.com/willmcgugan/rich#tracebacks
