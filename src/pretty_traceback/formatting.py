@@ -53,23 +53,24 @@ Prefix          = str
 SectionKey      = typ.Tuple[int, Prefix]
 LengthBySection = typ.Dict[SectionKey, int]
 
-Row         = typ.List[str]
-Rows        = typ.List[Row]
-SectionRows = typ.Dict[SectionKey, Rows]
+Row  = typ.List[str]
+Rows = typ.List[Row]
+
+
+Alias         = str
+Prefix        = str
+AliasPrefixes = typ.List[typ.Tuple[Alias, Prefix]]
 
 
 class Context(typ.NamedTuple):
 
-    # grouped but unpadded and uncolored
-    section_rows: SectionRows
+    rows   : Rows
+    aliases: AliasPrefixes
 
-    rows: Rows
-    prefixes: typ.List[str]
-
-    # paddings
-    lbs_module: LengthBySection
-    lbs_call  : LengthBySection
-    lbs_lineno: LengthBySection
+    # for paddings
+    max_module_len: int
+    max_lineno_len: int
+    max_call_len  : int
 
 
 PYTHON_ENV_PATTERN = r"""
@@ -110,10 +111,6 @@ def _init_path_prefixes() -> typ.List[str]:
 #   ("pwd",        "/home/user/projects/project"),
 #   ("home",       "/home/user"),
 # ]
-
-Alias         = str
-Prefix        = str
-AliasPrefixes = typ.List[typ.Tuple[Alias, Prefix]]
 
 
 def _parse_sep(paths: typ.Iterable[str]) -> str:
@@ -197,8 +194,8 @@ def parse_entry_aliase_prefixes(entries: typ.Sequence[com.Entry]) -> AliasPrefix
 
 
 def parse_prefixes(entries: typ.Sequence[com.Entry]) -> typ.List[str]:
-    sep = _parse_sep(e.module for e in entries)
-    dir_paths = [e.module.rsplit(sep, 1)[0] for e in entries]
+    sep               = _parse_sep(e.module for e in entries)
+    dir_paths         = [e.module.rsplit(sep, 1)[0] for e in entries]
     longest_dir_paths = sorted(set(dir_paths), key=len, reverse=True)
 
     # prefixes = []
@@ -215,117 +212,147 @@ def parse_prefixes(entries: typ.Sequence[com.Entry]) -> typ.List[str]:
     ]
 
 
-def _entries_to_sections(entries: typ.Sequence[com.Entry]) -> Context:
-    # prefixes = parse_entry_aliase_prefixes(entries)
-    prefixes = parse_prefixes(entries)
-
-    section_rows: typ.Dict[SectionKey, Rows] = {}
-
-    lbs_module: LengthBySection = {}
-    lbs_call  : LengthBySection = {}
-    lbs_lineno: LengthBySection = {}
-
-    prev_prefix = "<sentinel>"
-
+def _iter_entry_paths(entries: com.Entries) -> typ.Iterable[str]:
     for entry in entries:
-        module, call, lineno, context = entry
+        module_abspath   = os.path.abspath(entry.module)
+        is_valid_abspath = module_abspath != entry.module and os.path.exists(module_abspath)
+        if is_valid_abspath:
+            yield module_abspath
+        else:
+            yield entry.module
 
-        module_abs_path = os.path.abspath(module)
-        if module_abs_path != module and os.path.exists(module_abs_path):
-            module = module_abs_path
 
-        prefix          = ""
+def _init_aliases(entry_paths: typ.List[str]) -> AliasPrefixes:
+    _uniq_entry_paths = set(entry_paths)
 
-        for candidate_prefix in prefixes:
-            if module.startswith(candidate_prefix):
-                prefix          = candidate_prefix
-                module_rel_path = module.replace(prefix, "", 1)
+    paths = list(sys.path)
+    paths.sort(key=len)
+
+    pwd = os.getcwd()
+    if pwd in paths:
+        paths.remove(pwd)
+    paths.append(pwd)
+
+    alias_index = 0
+    aliases: AliasPrefixes = []
+    for path in reversed(paths):
+        is_path_used = False
+        for epath in _uniq_entry_paths:
+            if epath.startswith(path):
+                is_path_used = True
+                _uniq_entry_paths.remove(epath)
                 break
 
-        if prefix == prev_prefix:
-            section_key = (len(section_rows), prefix)
+        if not is_path_used:
+            continue
+
+        if path.endswith("site-packages"):
+            alias = "<sitepkg>"
+        elif path == pwd:
+            alias = "<pwd>"
+        elif re.search(r"lib/python\d.\d+$", path):
+            alias = "<py>"
+        elif re.search(r"lib/Python\d.\d+\\lib$", path):
+            alias = "<py>"
         else:
-            section_key = (len(section_rows) + 1, prefix)
-            prev_prefix = prefix
+            alias = f"<p{alias_index}>"
+            alias_index += 1
 
-        module_padding = lbs_module.get(section_key, 0)
-        call_padding   = lbs_call.get(section_key, 0)
-        lineno_padding = lbs_lineno.get(section_key, 0)
+        aliases.append((alias, path))
 
-        lbs_module[section_key] = max(module_padding, len(module_rel_path))
-        lbs_call[section_key] = max(call_padding, len(call))
-        lbs_lineno[section_key] = max(lineno_padding, len(lineno))
+    return aliases
 
-        if section_key not in section_rows:
-            section_rows[section_key] = []
 
-        section_rows[section_key].append([module_rel_path, call, lineno, context])
+def _init_entry_context(entries: com.Entries) -> Context:
+    entry_paths = list(_iter_entry_paths(entries))
+    aliases     = _init_aliases(entry_paths)
 
-    return Context(section_rows, lbs_module, lbs_call, lbs_lineno,)
+    rows: Rows = []
+
+    for module, entry in zip(entry_paths, entries):
+        _module, call, lineno, context = entry
+        assert module.endswith(_module)
+
+        used_alias   = ""
+        module_short = module
+        for alias, path in aliases:
+            if module.startswith(path):
+                used_alias   = alias
+                module_short = module[len(path) :]
+                break
+
+        rows.append([used_alias, module_short, call, lineno, context])
+
+    max_module_len = max(len(row[0]) + len(row[1]) for row in rows)
+    max_lineno_len = max(len(row[3]) for row in rows)
+    max_call_len   = max(len(row[2]) for row in rows)
+
+    return Context(rows, aliases, max_module_len, max_lineno_len, max_call_len,)
 
 
 def _update_padding(ctx: Context) -> None:
-    # expand padding from left to right as much as can fit the terminal
-    # will mutate section_rows (updating strings with added padding)
+    # Expand padding from left to right as much as can fit the terminal.
+    # This will mutate rows (updating strings with added padding)
 
     columns = _get_terminal_width()
-    for section_key, rows in ctx.section_rows.items():
-        section_max_len_module = ctx.lbs_module[section_key]
-        section_max_len_call   = ctx.lbs_call[section_key]
-        section_max_len_lineno = ctx.lbs_lineno[section_key]
 
-        for row in rows:
-            module, call, lineno, context = row
-            line_len = 2 + len(module) + 2 + len(call) + 2 + len(lineno) + 2 + len(context)
+    for row in ctx.rows:
+        alias, module, call, lineno, context = row
+        len_module = len(alias) + len(module)
+        line_len   = 2 + len_module + 2 + len(call) + 2 + len(lineno) + 2 + len(context)
 
-            padding_available = columns - line_len
-            if padding_available <= 0:
-                continue
+        padding_available = columns - line_len
+        if padding_available <= 0:
+            continue
 
-            section_len_module = max(len(module), section_max_len_module)
-            padding_consumed   = min(padding_available, section_len_module - len(module))
-            row[0] = module.ljust(len(module) + padding_consumed)
+        padding_desired  = ctx.max_module_len - len_module
+        padding_consumed = min(padding_available, padding_desired)
+        row[1] = module + " " * padding_consumed
 
-            padding_available -= padding_consumed
-            if padding_available <= 0:
-                continue
+        padding_available -= padding_consumed
+        if padding_available <= 0:
+            continue
 
-            section_len_call = max(len(call), section_max_len_call)
-            padding_consumed = min(padding_available, section_len_call - len(call))
-            row[1] = call.ljust(len(call) + padding_consumed)
+        padding_desired  = ctx.max_call_len - len(call)
+        padding_consumed = min(padding_available, padding_desired)
+        row[2] = call.ljust(len(call) + padding_consumed)
 
-            padding_available -= padding_consumed
-            if padding_available <= 0:
-                continue
+        padding_available -= padding_consumed
+        if padding_available <= 0:
+            continue
 
-            section_len_lineno = max(len(lineno), section_max_len_lineno)
-            padding_consumed   = min(padding_available, section_len_lineno - len(lineno))
-            row[2] = lineno.rjust(len(lineno) + padding_consumed)
+        padding_desired  = ctx.max_lineno_len - len(lineno)
+        padding_consumed = min(padding_available, padding_desired)
+        row[3] = lineno.rjust(len(lineno) + padding_consumed)
 
 
-def _rows_to_lines(section_rows: SectionRows, color: bool = False) -> typ.Iterable[str]:
+def _rows_to_lines(ctx: Context, color: bool = False) -> typ.Iterable[str]:
     # apply colors and additional separators/ spacing
     fmt_module  = FMT_MODULE if color else "{0}"
     fmt_call    = FMT_CALL if color else "{0}"
     fmt_lineno  = FMT_LINENO if color else "{0}"
     fmt_context = FMT_CONTEXT if color else "{0}"
 
-    for (_, prefix), rows in sorted(section_rows.items()):
-        if prefix.strip():
-            yield "  Path: " + fmt_module.format(prefix)
+    if ctx.aliases:
+        alias_padding = max(len(alias) for alias, _ in ctx.aliases)
+        for alias, path in ctx.aliases:
+            yield "    " + alias.ljust(alias_padding) + ": " + fmt_module.format(path)
 
-        for module, call, lineno, context in rows:
-            parts = (
-                "    ",
-                fmt_module.format(module),
-                "  ",
-                fmt_call.format(call),
-                "  ",
-                fmt_lineno.format(lineno),
-                ": ",
-                fmt_context.format(context),
-            )
-            yield "".join(parts)
+        yield ""
+
+    for alias, module, call, lineno, context in ctx.rows:
+        parts = (
+            "    ",
+            alias,
+            fmt_module.format(module),
+            "  ",
+            fmt_call.format(call),
+            "  ",
+            fmt_lineno.format(lineno),
+            ": ",
+            fmt_context.format(context),
+        )
+        yield "".join(parts)
 
 
 def _traceback_to_entries(traceback: types.TracebackType) -> typ.Iterable[com.Entry]:
@@ -344,10 +371,10 @@ def format_traceback(traceback: com.Traceback, color: bool = False) -> str:
     if traceback.exc_msg:
         error_line += ": " + traceback.exc_msg
 
-    ctx = _entries_to_sections(traceback.entries)
+    ctx = _init_entry_context(traceback.entries)
     _update_padding(ctx)
     lines = [com.TRACEBACK_HEAD]
-    lines.extend(_rows_to_lines(ctx.section_rows, color))
+    lines.extend(_rows_to_lines(ctx, color))
     lines.append(error_line)
     return os.linesep.join(lines) + os.linesep
 

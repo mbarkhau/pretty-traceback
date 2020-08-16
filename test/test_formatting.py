@@ -152,8 +152,6 @@ def main():
         print(tb_str)
         print("\n------------------------------\n")
 
-    return
-
     try:
         run_pingpong()
     except KeyError:
