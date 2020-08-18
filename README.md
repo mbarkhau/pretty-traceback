@@ -82,6 +82,14 @@ Some more examples.
 </p>
 </div>
 
+Or, if you're terminal is wide enough.
+
+<div align="center">
+<p align="center">
+  <img alt="logo" src="https://gitlab.com/mbarkhau/pretty-traceback/-/raw/master/example_tb_wide.png">
+</p>
+</div>
+
 
 ## Usage
 
