@@ -51,8 +51,24 @@ FMT_CONTEXT: str = "{0}"
 FMT_ERROR  : str = colorama.Fore.RED + colorama.Style.BRIGHT + "{0}" + colorama.Style.RESET_ALL
 
 
-Row  = typ.List[str]
-Rows = typ.List[Row]
+class Row(typ.NamedTuple):
+
+    alias       : str
+    short_module: str
+    full_module : str
+    call        : str
+    lineno      : str
+    context     : str
+
+
+class PaddedRow(typ.NamedTuple):
+
+    alias  : str
+    module : str
+    call   : str
+    lineno : str
+    context: str
+
 
 Alias  = str
 Prefix = str
@@ -62,13 +78,19 @@ AliasPrefixes = typ.List[typ.Tuple[Alias, Prefix]]
 
 class Context(typ.NamedTuple):
 
-    rows   : Rows
+    rows   : typ.List[Row]
     aliases: AliasPrefixes
 
+    term_width  : int
+    is_wide_mode: bool
+
     # for paddings
-    max_module_len: int
-    max_lineno_len: int
-    max_call_len  : int
+    max_short_module_len: int
+    max_full_module_len : int
+
+    max_lineno_len : int
+    max_call_len   : int
+    max_context_len: int
 
 
 def _iter_entry_paths(entries: com.Entries) -> typ.Iterable[str]:
@@ -143,17 +165,17 @@ def _init_aliases(entry_paths: typ.List[str]) -> AliasPrefixes:
     return aliases
 
 
-def _init_entry_context(entries: com.Entries) -> Context:
-    entry_paths = list(_iter_entry_paths(entries))
-    aliases     = _init_aliases(entry_paths)
-
-    rows: Rows = []
-
+def _iter_entry_rows(
+    aliases: AliasPrefixes, entry_paths: typ.List[str], entries: com.Entries
+) -> typ.Iterable[Row]:
     for module, entry in zip(entry_paths, entries):
         _module, call, lineno, context = entry
+        # NOTE (mb 2020-08-18): _module may not be an absolute path,
+        #   but it's not shortened using an alias yet either.
         assert module.endswith(_module)
 
         used_alias   = ""
+        module_full  = module
         module_short = module
         for alias, path in aliases:
             if module.startswith(path):
@@ -161,55 +183,89 @@ def _init_entry_context(entries: com.Entries) -> Context:
                 module_short = module[len(path) :]
                 break
 
-        rows.append([used_alias, module_short, call, lineno, context])
+        yield Row(used_alias, module_short, module_full, call, lineno, context)
+
+
+def _init_entry_context(entries: com.Entries) -> Context:
+    entry_paths = list(_iter_entry_paths(entries))
+    aliases     = _init_aliases(entry_paths)
+
+    rows = list(_iter_entry_rows(aliases, entry_paths, entries))
 
     if rows:
-        max_module_len = max(len(row[0]) + len(row[1]) for row in rows)
-        max_lineno_len = max(len(row[3]) for row in rows)
-        max_call_len   = max(len(row[2]) for row in rows)
+        max_short_module_len = max(len(row.alias      ) + len(row.short_module) for row in rows)
+        max_full_module_len  = max(len(row.full_module) for row in rows)
+
+        max_lineno_len  = max(len(row.lineno ) for row in rows)
+        max_call_len    = max(len(row.call   ) for row in rows)
+        max_context_len = max(len(row.context) for row in rows)
     else:
-        # this can happen on python2
-        max_module_len = 0
-        max_lineno_len = 0
-        max_call_len   = 0
+        max_short_module_len = 0
+        max_full_module_len  = 0
 
-    return Context(rows, aliases, max_module_len, max_lineno_len, max_call_len,)
+        max_lineno_len  = 0
+        max_call_len    = 0
+        max_context_len = 0
+
+    term_width    = _get_terminal_width()
+    max_total_len = max_full_module_len + max_lineno_len + max_call_len + max_context_len
+    is_wide_mode  = max_total_len < term_width
+
+    return Context(
+        rows,
+        aliases,
+        term_width,
+        is_wide_mode,
+        max_short_module_len,
+        max_full_module_len,
+        max_lineno_len,
+        max_call_len,
+        max_context_len,
+    )
 
 
-def _update_padding(ctx: Context) -> None:
+def _padded_rows(ctx: Context) -> typ.Iterable[PaddedRow]:
     # Expand padding from left to right as much as can fit the terminal.
     # This will mutate rows (updating strings with added padding)
 
-    columns = _get_terminal_width()
-
     for row in ctx.rows:
-        alias, module, call, lineno, context = row
-        len_module = len(alias) + len(module)
+        alias, module_short, module_full, call, lineno, context = row
+        len_module = len(alias) + len(module_short)
         line_len   = 2 + len_module + 2 + len(call) + 2 + len(lineno) + 2 + len(context)
 
-        padding_available = columns - line_len
-        if padding_available <= 0:
-            continue
+        padding_available = ctx.term_width - line_len
 
-        padding_desired  = ctx.max_module_len - len_module
-        padding_consumed = min(padding_available, padding_desired)
-        row[1] = module + " " * padding_consumed
+        if ctx.is_wide_mode:
+            alias         = ""
+            padded_module = module_full.ljust(ctx.max_full_module_len)
+        elif padding_available > 0:
+            padding_desired  = ctx.max_short_module_len - len_module
+            padding_consumed = min(padding_available, padding_desired)
+            padded_module    = module_short + " " * padding_consumed
+            padding_available -= padding_consumed
+        else:
+            padded_module = module_short
 
-        padding_available -= padding_consumed
-        if padding_available <= 0:
-            continue
+        if ctx.is_wide_mode:
+            padded_call = call.ljust(ctx.max_call_len)
+        elif padding_available > 0:
+            padding_desired  = ctx.max_call_len - len(call)
+            padding_consumed = min(padding_available, padding_desired)
+            padded_call      = call.ljust(len(call) + padding_consumed)
+            padding_available -= padding_consumed
+        else:
+            padded_call = call
 
-        padding_desired  = ctx.max_call_len - len(call)
-        padding_consumed = min(padding_available, padding_desired)
-        row[2] = call.ljust(len(call) + padding_consumed)
+        if ctx.is_wide_mode:
+            padded_lineno = lineno.rjust(ctx.max_lineno_len)
+        elif padding_available > 0:
+            padding_desired  = ctx.max_lineno_len - len(lineno)
+            padding_consumed = min(padding_available, padding_desired)
+            padded_lineno    = lineno.rjust(len(lineno) + padding_consumed)
+        else:
+            padded_lineno = lineno
 
-        padding_available -= padding_consumed
-        if padding_available <= 0:
-            continue
-
-        padding_desired  = ctx.max_lineno_len - len(lineno)
-        padding_consumed = min(padding_available, padding_desired)
-        row[3] = lineno.rjust(len(lineno) + padding_consumed)
+        yield PaddedRow(alias, padded_module, padded_call, padded_lineno, context)
 
 
 def _aliases_to_lines(ctx: Context, color: bool = False) -> typ.Iterable[str]:
@@ -220,14 +276,14 @@ def _aliases_to_lines(ctx: Context, color: bool = False) -> typ.Iterable[str]:
             yield "    " + alias.ljust(alias_padding) + ": " + fmt_module.format(path)
 
 
-def _rows_to_lines(ctx: Context, color: bool = False) -> typ.Iterable[str]:
+def _rows_to_lines(rows: typ.List[PaddedRow], color: bool = False) -> typ.Iterable[str]:
     # apply colors and additional separators/ spacing
     fmt_module  = FMT_MODULE if color else "{0}"
     fmt_call    = FMT_CALL if color else "{0}"
     fmt_lineno  = FMT_LINENO if color else "{0}"
     fmt_context = FMT_CONTEXT if color else "{0}"
 
-    for alias, module, call, lineno, context in ctx.rows:
+    for alias, module, call, lineno, context in rows:
         parts = (
             "    ",
             alias,
@@ -258,13 +314,16 @@ def format_traceback(traceback: com.Traceback, color: bool = False) -> str:
     if traceback.exc_msg:
         error_line += ": " + traceback.exc_msg
 
-    ctx = _init_entry_context(traceback.entries)
-    _update_padding(ctx)
+    ctx         = _init_entry_context(traceback.entries)
+    padded_rows = list(_padded_rows(ctx))
 
-    lines = [com.ALIASES_HEAD]
-    lines.extend(_aliases_to_lines(ctx, color))
+    lines = []
+    if not ctx.is_wide_mode:
+        lines.append(com.ALIASES_HEAD)
+        lines.extend(_aliases_to_lines(ctx, color))
+
     lines.append(com.TRACEBACK_HEAD)
-    lines.extend(_rows_to_lines(ctx, color))
+    lines.extend(_rows_to_lines(padded_rows, color))
     lines.append(error_line)
     return os.linesep.join(lines) + os.linesep
 
