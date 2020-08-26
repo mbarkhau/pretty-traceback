@@ -348,7 +348,6 @@ elif [[ -z "${IGNORE_IF_EXISTS[*]}" ]]; then
         "setup.py"
         "makefile"
         "requirements/pypi.txt"
-        "requirements/development.txt"
         "requirements/conda.txt"
         "requirements/vendor.txt"
         "src/${MODULE_NAME}/__init__.py"
