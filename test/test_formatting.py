@@ -74,6 +74,7 @@ def _pong(depth):
 
 
 def _ping(depth=0):
+    # pylint:disable=raise-missing-from  ; that's the point of the test...
     if depth > 2:
         try:
             sp.check_output(["command_that", "doesnt", "exist"])
