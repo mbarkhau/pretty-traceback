@@ -38,10 +38,9 @@ readme_renderer[md]
 twine
 
 md-toc
-straitjacket
+straitjacket>=v202008.1016
 pycalver
+lib3to6
 
 # needed for mypy coverage report
 lxml
-
-lib3to6

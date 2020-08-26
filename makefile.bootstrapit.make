@@ -310,8 +310,8 @@ lint_isort:
 
 
 ## Run sjfmt with --check
-.PHONY: lint_sjfmt
-lint_sjfmt:
+.PHONY: lint_fmt
+lint_fmt:
 	@printf "sjfmt ...\n"
 	@$(DEV_ENV)/bin/sjfmt \
 		--target-version=py36 \
@@ -356,7 +356,7 @@ pylint_ignore:
 
 ## Run flake8 linter and check for fmt
 .PHONY: lint
-lint: lint_isort lint_sjfmt lint_flake8 lint_pylint
+lint: lint_isort lint_fmt lint_flake8 lint_pylint
 
 
 ## Run mypy type checker
@@ -403,7 +403,8 @@ test:
 
 	rm -rf build/test_wheel;
 	mkdir -p build/test_wheel;
-	$(DEV_ENV_PY) setup.py bdist_wheel --dist-dir build/test_wheel;
+	$(DEV_ENV_PY) setup.py bdist_wheel --python-tag=$(BDIST_WHEEL_PYTHON_TAG) \
+		--dist-dir build/test_wheel;
 
 	IFS=' ' read -r -a env_py_paths <<< "$(CONDA_ENV_BIN_PYTHON_PATHS)"; \
 	for i in $${!env_py_paths[@]}; do \

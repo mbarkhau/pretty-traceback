@@ -346,7 +346,9 @@ def format_tracebacks(tracebacks: typ.List[com.Traceback], color: bool = False) 
 
 
 def exc_to_traceback_str(
-    exc_value: BaseException, traceback: types.TracebackType, color: bool = False,
+    exc_value: BaseException,
+    traceback: types.TracebackType,
+    color    : bool = False,
 ) -> str:
     # NOTE (mb 2020-08-13): wrt. cause vs context see
     #   https://www.python.org/dev/peps/pep-3134/#enhanced-reporting

@@ -16,7 +16,9 @@ from pretty_traceback import formatting
 
 def init_excepthook(color: bool) -> typ.Callable:
     def excepthook(
-        exc_type: typ.Type[BaseException], exc_value: BaseException, traceback: types.TracebackType,
+        exc_type : typ.Type[BaseException],
+        exc_value: BaseException,
+        traceback: types.TracebackType,
     ) -> None:
         # pylint:disable=unused-argument
         tb_str = formatting.exc_to_traceback_str(exc_value, traceback, color)

@@ -110,7 +110,12 @@ BASIC_TRACEBACK_ENTRIES = [
         lineno="28",
         src_ctx="raise value.with_traceback(tb)",
     ),
-    com.Entry(module="<template>", call="top-level template code", lineno="56", src_ctx="",),
+    com.Entry(
+        module="<template>",
+        call="top-level template code",
+        lineno="56",
+        src_ctx="",
+    ),
 ]
 
 
