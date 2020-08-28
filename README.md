@@ -109,11 +109,13 @@ Note, that the hook is only installed if the existing hook is the default. Any e
 A `logging.Formatter` subclass is also available (e.g. for integration with `flask`).
 
 ```python
+import os
 from flask.logging import default_handler
 
 try:
-    import pretty_traceback
-    default_handler.setFormatter(pretty_traceback.LoggingFormatter())
+    if os.getenv('FLASK_DEBUG') == "1":
+        import pretty_traceback
+        default_handler.setFormatter(pretty_traceback.LoggingFormatter())
 except ImportError:
     pass    # no need to fail because of missing dev dependency
 ```
