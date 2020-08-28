@@ -9,7 +9,7 @@ from .hook import uninstall
 from .formatting import LoggingFormatter
 from .formatting import LoggingFormaterMixin
 
-__version__ = "2020.1007"
+__version__ = "2020.1008"
 
 
 __all__ = [
