@@ -6,6 +6,8 @@
 
 from .hook import install
 from .hook import uninstall
+from .formatting import LoggingFormatter
+from .formatting import LoggingFormaterMixin
 
 __version__ = "2020.1007"
 
@@ -14,4 +16,6 @@ __all__ = [
     'install',
     'uninstall',
     '__version__',
+    'LoggingFormatter',
+    'LoggingFormaterMixin',
 ]

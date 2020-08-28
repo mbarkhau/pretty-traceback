@@ -9,6 +9,7 @@ import re
 import sys
 import types
 import typing as typ
+import logging
 import traceback as tb
 import subprocess as sp
 
@@ -384,3 +385,17 @@ def exc_to_traceback_str(
     tracebacks = list(reversed(tracebacks))
 
     return format_tracebacks(tracebacks, color)
+
+
+class LoggingFormaterMixin:
+    # pylint:disable=invalid-name   # logging module naming convention
+    # pylint:disable=no-self-use    # because mixin
+
+    def formatException(self, ei) -> str:
+        _, exc_value, traceback = ei
+        return exc_to_traceback_str(exc_value, traceback, color=True)
+
+
+class LoggingFormatter(LoggingFormaterMixin, logging.Formatter):
+
+    pass

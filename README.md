@@ -32,7 +32,7 @@ In other words, get this 😍
 
 <div align="center">
 <p align="center">
-  <img alt="logo" src="https://gitlab.com/mbarkhau/pretty-traceback/-/raw/master/example_tb2.png">
+  <img alt="logo" src="https://gitlab.com/mbarkhau/pretty-traceback/-/raw/master/example_tb3.png">
 </p>
 </div>
 
@@ -68,25 +68,11 @@ Traceback (most recent call last):
 TypeError: no loader for this environment specified
 ```
 
-Some more examples.
+If you're terminal is not wide enough, the long paths are replaced with aliases.
 
 <div align="center">
 <p align="center">
-  <img alt="logo" src="https://gitlab.com/mbarkhau/pretty-traceback/-/raw/master/example_tb0.png">
-</p>
-</div>
-
-<div align="center">
-<p align="center">
-  <img alt="logo" src="https://gitlab.com/mbarkhau/pretty-traceback/-/raw/master/example_tb1.png">
-</p>
-</div>
-
-Or, if you're terminal is wide enough.
-
-<div align="center">
-<p align="center">
-  <img alt="logo" src="https://gitlab.com/mbarkhau/pretty-traceback/-/raw/master/example_tb_wide.png">
+  <img alt="logo" src="https://gitlab.com/mbarkhau/pretty-traceback/-/raw/master/example_tb2.png">
 </p>
 </div>
 
@@ -116,6 +102,43 @@ except ImportError:
 ```
 
 Note, that the hook is only installed if the existing hook is the default. Any existing hooks that were installed before the call of `pretty_traceback.install` will be left in place.
+
+
+## LoggingFormatter
+
+A `logging.Formatter` subclass is also available (e.g. for integration with `flask`).
+
+```python
+from flask.logging import default_handler
+
+try:
+    import pretty_traceback
+    default_handler.setFormatter(pretty_traceback.LoggingFormatter())
+except ImportError:
+    pass    # no need to fail because of missing dev dependency
+```
+
+
+## More Examples
+
+<div align="center">
+<p align="center">
+  <img alt="logo" src="https://gitlab.com/mbarkhau/pretty-traceback/-/raw/master/example_tb0.png">
+</p>
+</div>
+
+<div align="center">
+<p align="center">
+  <img alt="logo" src="https://gitlab.com/mbarkhau/pretty-traceback/-/raw/master/example_tb1.png">
+</p>
+</div>
+
+<div align="center">
+<p align="center">
+  <img alt="logo" src="https://gitlab.com/mbarkhau/pretty-traceback/-/raw/master/example_tb_wide.png">
+</p>
+</div>
+
 
 
 ## Alternatives
