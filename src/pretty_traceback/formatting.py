@@ -208,7 +208,7 @@ def _init_entry_context(entries: com.Entries) -> Context:
         max_call_len    = 0
         max_context_len = 0
 
-    term_width    = _get_terminal_width()
+    term_width    = _get_terminal_width() - 10
     max_total_len = max_full_module_len + max_lineno_len + max_call_len + max_context_len
     is_wide_mode  = max_total_len < term_width
 
@@ -226,45 +226,27 @@ def _init_entry_context(entries: com.Entries) -> Context:
 
 
 def _padded_rows(ctx: Context) -> typ.Iterable[PaddedRow]:
-    # Expand padding from left to right as much as can fit the terminal.
+    # Expand padding from left to right.
     # This will mutate rows (updating strings with added padding)
 
     for row in ctx.rows:
         alias, module_short, module_full, call, lineno, context = row
-        len_module = len(alias) + len(module_short)
-        line_len   = 2 + len_module + 2 + len(call) + 2 + len(lineno) + 2 + len(context)
-
-        padding_available = ctx.term_width - line_len
 
         if ctx.is_wide_mode:
             alias         = ""
             padded_module = module_full.ljust(ctx.max_full_module_len)
-        elif padding_available > 0:
-            padding_desired  = ctx.max_short_module_len - len_module
-            padding_consumed = min(padding_available, padding_desired)
-            padded_module    = module_short + " " * padding_consumed
-            padding_available -= padding_consumed
         else:
-            padded_module = module_short
+            padded_module = module_short.ljust(ctx.max_short_module_len)
 
         if ctx.is_wide_mode:
             padded_call = call.ljust(ctx.max_call_len)
-        elif padding_available > 0:
-            padding_desired  = ctx.max_call_len - len(call)
-            padding_consumed = min(padding_available, padding_desired)
-            padded_call      = call.ljust(len(call) + padding_consumed)
-            padding_available -= padding_consumed
         else:
-            padded_call = call
+            padded_call = call.ljust(ctx.max_call_len)
 
         if ctx.is_wide_mode:
             padded_lineno = lineno.rjust(ctx.max_lineno_len)
-        elif padding_available > 0:
-            padding_desired  = ctx.max_lineno_len - len(lineno)
-            padding_consumed = min(padding_available, padding_desired)
-            padded_lineno    = lineno.rjust(len(lineno) + padding_consumed)
         else:
-            padded_lineno = lineno
+            padded_lineno = lineno.ljust(ctx.max_lineno_len)
 
         yield PaddedRow(alias, padded_module, padded_call, padded_lineno, context)
 
