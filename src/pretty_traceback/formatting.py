@@ -184,7 +184,7 @@ def _iter_entry_rows(
                 module_short = module[len(path) :]
                 break
 
-        yield Row(used_alias, module_short, module_full, call, lineno, context)
+        yield Row(used_alias, module_short, module_full, call or "", lineno or "", context or "")
 
 
 def _init_entry_context(entries: com.Entries) -> Context:
