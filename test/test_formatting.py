@@ -16,11 +16,13 @@ from pretty_traceback import common
 from pretty_traceback import parsing
 from pretty_traceback import formatting
 
-PY3 = sys.version_info[0] == 3
+try:
+    import __builtin__ as builtins
+except ImportError:
+    import builtins
 
-# pylint:disable=invalid-name
-# pylint:disable=undefined-variable
-text_type = str if PY3 else unicode
+
+text_type = getattr(builtins, 'unicode', str)
 
 
 TEST_PATHS_WIN = [
