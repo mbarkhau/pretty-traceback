@@ -1,4 +1,4 @@
-# Changelog for https://gitlab.com/mbarkhau/pretty-traceback
+# Changelog for https://github.com/mbarkhau/pretty-traceback
 
 ## 2020.1008
 

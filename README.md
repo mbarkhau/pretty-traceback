@@ -32,7 +32,7 @@ In other words, get this 😍
 
 <div align="center">
 <p align="center">
-  <img alt="logo" src="https://gitlab.com/mbarkhau/pretty-traceback/-/raw/master/example_tb3.png">
+  <img alt="logo" src="https://github.com/mbarkhau/pretty-traceback/raw/master/example_tb3.png">
 </p>
 </div>
 
@@ -72,7 +72,7 @@ If you're terminal is not wide enough, the long paths are replaced with aliases.
 
 <div align="center">
 <p align="center">
-  <img alt="logo" src="https://gitlab.com/mbarkhau/pretty-traceback/-/raw/master/example_tb2.png">
+  <img alt="logo" src="https://github.com/mbarkhau/pretty-traceback/raw/master/example_tb2.png">
 </p>
 </div>
 
@@ -125,19 +125,19 @@ except ImportError:
 
 <div align="center">
 <p align="center">
-  <img alt="logo" src="https://gitlab.com/mbarkhau/pretty-traceback/-/raw/master/example_tb0.png">
+  <img alt="logo" src="https://github.com/mbarkhau/pretty-traceback/raw/master/example_tb0.png">
 </p>
 </div>
 
 <div align="center">
 <p align="center">
-  <img alt="logo" src="https://gitlab.com/mbarkhau/pretty-traceback/-/raw/master/example_tb1.png">
+  <img alt="logo" src="https://github.com/mbarkhau/pretty-traceback/raw/master/example_tb1.png">
 </p>
 </div>
 
 <div align="center">
 <p align="center">
-  <img alt="logo" src="https://gitlab.com/mbarkhau/pretty-traceback/-/raw/master/example_tb_wide.png">
+  <img alt="logo" src="https://github.com/mbarkhau/pretty-traceback/raw/master/example_tb_wide.png">
 </p>
 </div>
 
@@ -154,7 +154,7 @@ Pretty Traceback is heavily inspired by the backtrace module by nir0s.
 - https://github.com/staticshock/colored-traceback.py
 - https://github.com/chillaranand/ptb
 
-[repo_ref]: https://gitlab.com/mbarkhau/pretty-traceback
+[repo_ref]: https://github.com/mbarkhau/pretty-traceback
 
 [github_build_img]: https://github.com/mbarkhau/pretty-traceback/workflows/CI/badge.svg
 [github_build_ref]: https://github.com/mbarkhau/pretty-traceback/actions?query=workflow%3ACI

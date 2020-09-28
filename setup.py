@@ -1,5 +1,5 @@
 # This file is part of the pretty-traceback project
-# https://gitlab.com/mbarkhau/pretty-traceback
+# https://github.com/mbarkhau/pretty-traceback
 #
 # Copyright (c) 2020 Manuel Barkhau (mbarkhau@gmail.com) - MIT License
 # SPDX-License-Identifier: MIT
@@ -80,7 +80,7 @@ setuptools.setup(
     license="MIT",
     author="Manuel Barkhau",
     author_email="mbarkhau@gmail.com",
-    url="https://gitlab.com/mbarkhau/pretty-traceback",
+    url="https://github.com/mbarkhau/pretty-traceback",
     version="2020.1008",
     keywords="traceback stacktrace pretty",
     description="Human readable stacktraces.",

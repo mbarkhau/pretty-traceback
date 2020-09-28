@@ -19,7 +19,7 @@ KEYWORDS="traceback stacktrace pretty"
 DESCRIPTION="Human readable stacktraces."
 
 
-GIT_REPO_DOMAIN="gitlab.com"
+GIT_REPO_DOMAIN="github.com"
 GIT_REPO_NAMESPACE="mbarkhau"
 PACKAGE_NAME="pretty-traceback"
 MODULE_NAME="pretty_traceback"
@@ -75,7 +75,7 @@ LICENSE_ID="MIT"
 # PAGES_DOMAIN=bitbucket.io
 # PAGES_DOMAIN=gitlab-pages.yourdomain.com
 
-# DOCKER_REGISTRY_DOMAIN=registry.gitlab.com
+DOCKER_REGISTRY_DOMAIN=registry.gitlab.com
 # DOCKER_REGISTRY_DOMAIN=docker.yourdomain.com
 #
 # DOCKER_ROOT_IMAGE=registry.gitlab.com/mbarkhau/bootstrapit/root
