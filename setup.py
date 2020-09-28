@@ -53,12 +53,9 @@ classifiers = [
 package_dir = {"": "src"}
 
 
-is_lib3to6_fix_required = (
-    any(arg.startswith("bdist") for arg in sys.argv)
-    and "Programming Language :: Python :: 2.7" in classifiers
-)
+is_bdist = any(arg.startswith("bdist") for arg in sys.argv)
 
-if is_lib3to6_fix_required:
+if is_bdist:
     try:
         import lib3to6
         package_dir = lib3to6.fix(package_dir)
