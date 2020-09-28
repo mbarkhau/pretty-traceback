@@ -57,6 +57,7 @@ CONDA_ENV_BIN_PYTHON_PATHS := \
 empty :=
 literal_space := $(empty) $(empty)
 
+# BDIST_WHEEL_PYTHON_TAG := py2.py3
 BDIST_WHEEL_PYTHON_TAG := \
 	$(subst python,py,$(subst $(literal_space),.,$(subst .,,$(subst =,,$(SUPPORTED_PYTHON_VERSIONS)))))
 
@@ -182,7 +183,7 @@ help:
 				helpMessage = ""; \
 			} \
 		}' \
-		makefile.bootstrapit.make makefile
+		Makefile.bootstrapit.make Makefile
 
 	@if [[ ! -f $(DEV_ENV_PY) ]]; then \
 	echo "Missing python interpreter at $(DEV_ENV_PY) !"; \
@@ -236,7 +237,7 @@ helpverbose:
 				helpMessage = ""; \
 			} \
 		}' \
-		makefile.bootstrapit.make makefile
+		Makefile.bootstrapit.make Makefile
 
 
 ## -- Project Setup --
