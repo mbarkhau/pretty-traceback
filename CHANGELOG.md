@@ -1,5 +1,11 @@
 # Changelog for https://github.com/mbarkhau/pretty-traceback
 
+## 2020.1009
+
+- Fix #3: Corner case where exception has `None` as context
+- Fix #2: Improve formatting when line overflows
+
+
 ## 2020.1008
 
 - Add `pretty_traceback.LoggingFormatter`
