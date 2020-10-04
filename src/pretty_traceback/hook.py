@@ -22,11 +22,14 @@ def init_excepthook(color: bool) -> typ.Callable:
     ) -> None:
         # pylint:disable=unused-argument
         tb_str = formatting.exc_to_traceback_str(exc_value, traceback, color)
-        try:
+        if color:
             colorama.init()
+            try:
+                sys.stderr.write(tb_str)
+            finally:
+                colorama.deinit()
+        else:
             sys.stderr.write(tb_str)
-        finally:
-            colorama.deinit()
 
     return excepthook
 
