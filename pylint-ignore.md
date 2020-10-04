@@ -43,37 +43,37 @@ The recommended approach to using `pylint-ignore` is:
 ```
 
 
-## File test/test_formatting.py - Line 117 - W0511 (fixme)
+## File src/pretty_traceback/formatting.py - Line 150 - W0511 (fixme)
+
+- `message: TODO (mb 2020-08-16): more betterer paths`
+- `author : Manuel Barkhau <mbarkhau@gmail.com>`
+- `date   : 2020-08-16T21:13:16`
+
+```
+  134: def _init_aliases(entry_paths: typ.List[str]) -> AliasPrefixes:
+  ...
+  148:             continue
+  149:
+> 150:         # TODO (mb 2020-08-16): more betterer paths
+  151:         if path.endswith("site-packages"):
+  152:             alias = "<sitepkg>"
+```
+
+
+## File test/test_formatting.py - Line 171 - W0511 (fixme)
 
 - `message: TODO (mb 2020-08-14): compare to test.fixture.CHAINED_TRACEBACK`
 - `author : Manuel Barkhau <mbarkhau@gmail.com>`
 - `date   : 2020-08-16T21:13:16`
 
 ```
-  109: def test_pingpong():
+  163: def test_pingpong():
   ...
-  115:         tb_str = formatting.exc_to_traceback_str(exc_value, traceback, color=False)
-  116:         assert isinstance(tb_str, text_type)
-> 117:         # TODO (mb 2020-08-14): compare to test.fixture.CHAINED_TRACEBACK
-  118:
-  119:
-```
-
-
-## File src/pretty_traceback/formatting.py - Line 149 - W0511 (fixme)
-
-- `message: TODO (mb 2020-08-16): more better paths`
-- `author : Manuel Barkhau <mbarkhau@gmail.com>`
-- `date   : 2020-08-16T21:13:16`
-
-```
-  132: def _init_aliases(entry_paths: typ.List[str]) -> AliasPrefixes:
-  ...
-  147:             continue
-  148:
-> 149:         # TODO (mb 2020-08-16): more better paths
-  150:         if path.endswith("site-packages"):
-  151:             alias = "<sitepkg>"
+  169:         tb_str = formatting.exc_to_traceback_str(exc_value, traceback, color=False)
+  170:         assert isinstance(tb_str, text_type)
+> 171:         # TODO (mb 2020-08-14): compare to test.fixture.CHAINED_TRACEBACK
+  172:
+  173:
 ```
 
 

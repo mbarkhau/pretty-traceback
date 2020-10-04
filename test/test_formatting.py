@@ -1,15 +1,21 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=redefined-outer-name
+# pylint: disable=protected-access
+# pylint: disable=unused-argument
+
 from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import os
+import re
 import sys
 import time
 import sched
 import subprocess as sp
+
+import pytest
 
 import test.fixtures
 from pretty_traceback import common
@@ -48,10 +54,21 @@ TEST_PATHS_UNIX = [
     "/home/user/venv/lib/python2.7/site-packages",
     "/home/user/.local/lib/python3.8/site-packages",
     "/home/user/venvs/py38/lib/python3.8/site-packages",
+    "/home/user/venvs/py38",
+    "/home/user/foss/myproject/src/myproject",
 ]
 
 
-def test_formatting():
+@pytest.fixture
+def env_setup():
+    formatting.TEST_PATHS = TEST_PATHS_WIN + TEST_PATHS_UNIX
+    formatting.PWD        = "/home/user/foss/myproject"
+    yield
+    del formatting.TEST_PATHS[:]
+    formatting.PWD = os.getcwd()
+
+
+def test_formatting_basic():
     for trace_str in test.fixtures.ALL_TRACEBACK_STRS:
         tracebacks = parsing.parse_tracebacks(trace_str)
         for traceback in tracebacks:
@@ -69,6 +86,43 @@ def test_formatting():
 
                 fname = entry.module.rsplit("/")[-1].rsplit("\\")[-1]
                 assert fname in line
+
+
+FORMATTING_TEST_CASES = [
+    (0,   10, r"    \<\w+\>.*\.py[ ]+"),
+    (1,   10, r"    \<\w+\>.*\.py[ ]+"),
+    (0, 1000, r"    .*\.py[ ]+"),
+    (1, 1000, r"    .*\.py[ ]+"),
+]
+
+
+@pytest.mark.parametrize("fixture_index, term_width, pathsep_re", FORMATTING_TEST_CASES)
+def test_formatting(fixture_index, term_width, pathsep_re, env_setup):
+    trace_str = test.fixtures.ALL_TRACEBACK_STRS[fixture_index]
+    for traceback in parsing.parse_tracebacks(trace_str):
+        ctx    = formatting._init_entries_context(traceback.entries, term_width=term_width)
+        tb_str = formatting._format_traceback(ctx, traceback)
+
+        pathsep_offsets = []
+        lineno_offsets  = []
+
+        tb_lines = tb_str.split(common.TRACEBACK_HEAD)[-1].strip("\n").splitlines()[:-1]
+        for line in tb_lines:
+            assert line.startswith("    "), repr(line)
+
+            pathsep_match = re.search(pathsep_re, line)
+            if pathsep_match:
+                _, end = pathsep_match.span()
+                pathsep_offsets.append(end)
+
+            lineno_match = re.search(r"\d+:", line)
+            if lineno_match:
+                _, end = lineno_match.span()
+                lineno_offsets.append(end)
+
+        # all line numbers are aligned to the right at the same offset
+        assert len(pathsep_offsets) > 3 and len(set(pathsep_offsets)) == 1
+        assert len(lineno_offsets ) > 3 and len(set(lineno_offsets )) == 1
 
 
 def _pong(depth):

@@ -82,8 +82,8 @@ class Context(typ.NamedTuple):
     rows   : typ.List[Row]
     aliases: AliasPrefixes
 
-    term_width  : int
-    is_wide_mode: bool
+    max_row_width: int
+    is_wide_mode : bool
 
     # for paddings
     max_short_module_len: int
@@ -120,12 +120,14 @@ def _py_paths() -> typ.List[str]:
     #   path possible.
 
     paths = list(sys.path)
-    paths.sort(key=len)
+    # NOTE (mb 2020-10-04): aliases must be sorted from longest to
+    #   shortest, so that the longer matches are used first.
+    paths.sort(key=len, reverse=True)
 
-    # pwd should be last (has preference)
+    # PWD should be first (has preference)
     if PWD in paths:
         paths.remove(PWD)
-    paths.append(PWD)
+        paths.insert(0, PWD)
     return paths
 
 
@@ -135,18 +137,17 @@ def _init_aliases(entry_paths: typ.List[str]) -> AliasPrefixes:
 
     alias_index = 0
     aliases: AliasPrefixes = []
-    for path in reversed(paths):
+    for path in paths:
         is_path_used = False
-        for epath in _uniq_entry_paths:
-            if epath.startswith(path):
+        for entry_path in list(_uniq_entry_paths):
+            if entry_path.startswith(path):
                 is_path_used = True
-                _uniq_entry_paths.remove(epath)
-                break
+                _uniq_entry_paths.remove(entry_path)
 
         if not is_path_used:
             continue
 
-        # TODO (mb 2020-08-16): more better paths
+        # TODO (mb 2020-08-16): more betterer paths
         if path.endswith("site-packages"):
             alias = "<sitepkg>"
         elif path.endswith("dist-packages"):
@@ -187,9 +188,22 @@ def _iter_entry_rows(
         yield Row(used_alias, module_short, module_full, call or "", lineno or "", context or "")
 
 
-def _init_entry_context(entries: com.Entries) -> Context:
+def _init_entries_context(entries: com.Entries, term_width: typ.Optional[int] = None) -> Context:
+    if term_width is None:
+        _term_width = _get_terminal_width()
+    else:
+        _term_width = term_width
+
     entry_paths = list(_iter_entry_paths(entries))
     aliases     = _init_aliases(entry_paths)
+
+    # NOTE (mb 2020-10-04): When calculating widths of a column, we care more
+    #   about alignment than staying below the max_row_width. The limits are
+    #   only a best effort and padding will be added even if that means
+    #   wrapping. We rely on the aliases to reduce the wrapping.
+
+    # indent (4 spaces) + 3 x sep (2 spaces each)
+    max_row_width = _term_width - 10
 
     rows = list(_iter_entry_rows(aliases, entry_paths, entries))
 
@@ -208,14 +222,13 @@ def _init_entry_context(entries: com.Entries) -> Context:
         max_call_len    = 0
         max_context_len = 0
 
-    term_width    = _get_terminal_width() - 10
     max_total_len = max_full_module_len + max_lineno_len + max_call_len + max_context_len
-    is_wide_mode  = max_total_len < term_width
+    is_wide_mode  = max_total_len < max_row_width
 
     return Context(
         rows,
         aliases,
-        term_width,
+        max_row_width,
         is_wide_mode,
         max_short_module_len,
         max_full_module_len,
@@ -236,17 +249,14 @@ def _padded_rows(ctx: Context) -> typ.Iterable[PaddedRow]:
             alias         = ""
             padded_module = module_full.ljust(ctx.max_full_module_len)
         else:
-            padded_module = module_short.ljust(ctx.max_short_module_len)
+            padded_module = module_short.ljust(ctx.max_short_module_len - len(alias))
 
         if ctx.is_wide_mode:
             padded_call = call.ljust(ctx.max_call_len)
         else:
             padded_call = call.ljust(ctx.max_call_len)
 
-        if ctx.is_wide_mode:
-            padded_lineno = lineno.rjust(ctx.max_lineno_len)
-        else:
-            padded_lineno = lineno.ljust(ctx.max_lineno_len)
+        padded_lineno = lineno.rjust(ctx.max_lineno_len)
 
         yield PaddedRow(alias, padded_module, padded_call, padded_lineno, context)
 
@@ -291,24 +301,29 @@ def _traceback_to_entries(traceback: types.TracebackType) -> typ.Iterable[com.En
         yield com.Entry(module, call, lineno, context)
 
 
-def format_traceback(traceback: com.Traceback, color: bool = False) -> str:
-    fmt_error  = FMT_ERROR if color else "{0}"
-    error_line = fmt_error.format(traceback.exc_name)
-    if traceback.exc_msg:
-        error_line += ": " + traceback.exc_msg
-
-    ctx         = _init_entry_context(traceback.entries)
+def _format_traceback(ctx: Context, traceback: com.Traceback, color: bool = False) -> str:
     padded_rows = list(_padded_rows(ctx))
 
     lines = []
-    if not ctx.is_wide_mode:
+    if ctx.aliases and not ctx.is_wide_mode:
         lines.append(com.ALIASES_HEAD)
         lines.extend(_aliases_to_lines(ctx, color))
 
     lines.append(com.TRACEBACK_HEAD)
     lines.extend(_rows_to_lines(padded_rows, color))
+
+    fmt_error  = FMT_ERROR if color else "{0}"
+    error_line = fmt_error.format(traceback.exc_name)
+    if traceback.exc_msg:
+        error_line += ": " + traceback.exc_msg
+
     lines.append(error_line)
     return os.linesep.join(lines) + os.linesep
+
+
+def format_traceback(traceback: com.Traceback, color: bool = False) -> str:
+    ctx = _init_entries_context(traceback.entries)
+    return _format_traceback(ctx, traceback, color)
 
 
 def format_tracebacks(tracebacks: typ.List[com.Traceback], color: bool = False) -> str:
