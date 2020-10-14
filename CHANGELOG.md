@@ -1,15 +1,20 @@
 # Changelog for https://github.com/mbarkhau/pretty-traceback
 
+## 2020.1011
+
+- Fix github #1: Invalid path handling for `./script.py`
+
+
 ## 2020.1010
 
-- Fix #5: Only show aliases that were actually used.
-- Fix #5: Better alignment on narrow terminals.
+- Fix gitlab #5: Only show aliases that were actually used.
+- Fix gitlab #5: Better alignment on narrow terminals.
 
 
 ## 2020.1009
 
-- Fix #3: Corner case where exception has `None` as context.
-- Fix #2: Improve formatting when line overflows.
+- Fix gitlab #3: Corner case where exception has `None` as context.
+- Fix gitlab #2: Improve formatting when line overflows.
 
 
 ## 2020.1008
