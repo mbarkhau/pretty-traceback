@@ -6,7 +6,7 @@ Project/Repo:
 
 [![MIT License][license_img]][license_ref]
 [![Supported Python Versions][pyversions_img]][pyversions_ref]
-[![PyCalVer 2020.1010][version_img]][version_ref]
+[![PyCalVer 2020.1011][version_img]][version_ref]
 [![PyPI Version][pypi_img]][pypi_ref]
 [![PyPI Downloads][downloads_img]][downloads_ref]
 
@@ -180,7 +180,7 @@ Pretty Traceback is heavily inspired by the backtrace module by nir0s.
 [downloads_img]: https://pepy.tech/badge/pretty-traceback/month
 [downloads_ref]: https://pepy.tech/project/pretty-traceback
 
-[version_img]: https://img.shields.io/static/v1.svg?label=PyCalVer&message=2020.1010&color=blue
+[version_img]: https://img.shields.io/static/v1.svg?label=PyCalVer&message=2020.1011&color=blue
 [version_ref]: https://pypi.org/project/pycalver/
 
 [pyversions_img]: https://img.shields.io/pypi/pyversions/pretty-traceback.svg

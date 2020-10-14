@@ -75,7 +75,7 @@ setuptools.setup(
     author="Manuel Barkhau",
     author_email="mbarkhau@gmail.com",
     url="https://github.com/mbarkhau/pretty-traceback",
-    version="2020.1010",
+    version="2020.1011",
     keywords="traceback stacktrace pretty",
     description="Human readable stacktraces.",
     long_description=long_description,
