@@ -176,7 +176,7 @@ AttributeError: 'module' object has no attribute 'plugins'
 
 CHAINED_TRACEBACK_STR = """
 Traceback (most recent call last):
-  File "/home/user/project/test/test_formatting.py", line 30, in _ping
+  File "./test/test_formatting.py", line 30, in _ping
     sp.check_output(['command_that', 'doesnt', 'exist'])
   File "/home/user/envs/py38/lib/python3.8/subprocess.py", line 411, in check_output
     return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
@@ -222,7 +222,7 @@ KeyError: Wrapping KeyError
 
 CHAINED_TRACEBACK_ENTRIES_0 = [
     com.Entry(
-        module="/home/user/project/test/test_formatting.py",
+        module="./test/test_formatting.py",
         call="_ping",
         lineno="30",
         src_ctx="sp.check_output(['command_that', 'doesnt', 'exist'])",

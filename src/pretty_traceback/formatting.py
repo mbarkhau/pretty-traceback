@@ -170,20 +170,23 @@ def _init_aliases(entry_paths: typ.List[str]) -> AliasPrefixes:
 def _iter_entry_rows(
     aliases: AliasPrefixes, entry_paths: typ.List[str], entries: com.Entries
 ) -> typ.Iterable[Row]:
-    for module, entry in zip(entry_paths, entries):
-        _module, call, lineno, context = entry
-        # NOTE (mb 2020-08-18): _module may not be an absolute path,
-        #   but it's not shortened using an alias yet either.
-        assert module.endswith(_module)
-
+    for abs_module, entry in zip(entry_paths, entries):
         used_alias   = ""
-        module_full  = module
-        module_short = module
-        for alias, path in aliases:
-            if module.startswith(path):
-                used_alias   = alias
-                module_short = module[len(path) :]
-                break
+        module_full  = abs_module
+        module_short = abs_module
+
+        module, call, lineno, context = entry
+        if module.startswith("." + os.sep):
+            module = module[2:]
+
+        # NOTE (mb 2020-08-18): module may not be an absolute path,
+        #   but it's not shortened using an alias yet either.
+        if abs_module.endswith(module):
+            for alias, path in aliases:
+                if abs_module.startswith(path):
+                    used_alias   = alias
+                    module_short = abs_module[len(path) :]
+                    break
 
         yield Row(used_alias, module_short, module_full, call or "", lineno or "", context or "")
 
