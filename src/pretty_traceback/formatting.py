@@ -124,23 +124,21 @@ def _py_paths() -> typ.List[str]:
     #   shortest, so that the longer matches are used first.
     paths.sort(key=len, reverse=True)
 
-    # PWD should be first (has preference)
-    if PWD in paths:
-        paths.remove(PWD)
-        paths.insert(0, PWD)
+    if "" in paths:
+        paths.remove("")
+
     return paths
 
 
 def _init_aliases(entry_paths: typ.List[str]) -> AliasPrefixes:
     _uniq_entry_paths = set(entry_paths)
-    paths             = _py_paths()
 
     alias_index = 0
     aliases: AliasPrefixes = []
-    for path in paths:
+    for py_path in _py_paths():
         is_path_used = False
         for entry_path in list(_uniq_entry_paths):
-            if entry_path.startswith(path):
+            if entry_path.startswith(py_path):
                 is_path_used = True
                 _uniq_entry_paths.remove(entry_path)
 
@@ -148,21 +146,21 @@ def _init_aliases(entry_paths: typ.List[str]) -> AliasPrefixes:
             continue
 
         # TODO (mb 2020-08-16): more betterer paths
-        if path.endswith("site-packages"):
+        if py_path.endswith("site-packages"):
             alias = "<sitepkg>"
-        elif path.endswith("dist-packages"):
+        elif py_path.endswith("dist-packages"):
             alias = "<distpkg>"
-        elif path == PWD:
+        elif py_path == PWD:
             alias = "<pwd>"
-        elif re.search(r"lib/python\d.\d+$", path):
+        elif re.search(r"lib/python\d.\d+$", py_path):
             alias = "<py>"
-        elif re.search(r"lib/Python\d.\d+\\lib$", path):
+        elif re.search(r"lib/Python\d.\d+\\lib$", py_path):
             alias = "<py>"
         else:
             alias = f"<p{alias_index}>"
             alias_index += 1
 
-        aliases.append((alias, path))
+        aliases.append((alias, py_path))
 
     return aliases
 
@@ -182,11 +180,17 @@ def _iter_entry_rows(
         # NOTE (mb 2020-08-18): module may not be an absolute path,
         #   but it's not shortened using an alias yet either.
         if abs_module.endswith(module):
-            for alias, path in aliases:
-                if abs_module.startswith(path):
+            for alias, alias_path in aliases:
+                if not abs_module.startswith(alias_path):
+                    continue
+
+                new_module_short = abs_module[len(alias_path) :]
+
+                new_len = len(new_module_short) + len(alias)
+                old_len = len(module_short    ) + len(used_alias)
+                if new_len < old_len:
                     used_alias   = alias
-                    module_short = abs_module[len(path) :]
-                    break
+                    module_short = new_module_short
 
         yield Row(used_alias, module_short, module_full, call or "", lineno or "", context or "")
 
