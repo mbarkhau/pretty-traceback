@@ -1,5 +1,10 @@
 # Changelog for https://github.com/mbarkhau/pretty-traceback
 
+## 2020.1012
+
+- Improve alias selection
+
+
 ## 2020.1011
 
 - Fix github #1: Invalid path handling for `./script.py`
