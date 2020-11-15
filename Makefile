@@ -24,7 +24,9 @@ include Makefile.bootstrapit.make
 
 ## -- Extra/Custom/Project Specific Tasks --
 
-## Run testcase to show formatting
+## Dummy target for illustration
+##    This is just to illustrate how to add your
+##    extra targets outside of the main Makefile.
 .PHONY: demo
 demo:
 	$(DEV_ENV_PY) test/test_formatting.py

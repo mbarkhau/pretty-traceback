@@ -72,6 +72,8 @@ DEV_ENV_PY := $(DEV_ENV)/bin/python
 
 RSA_KEY_PATH := $(HOME)/.ssh/$(PKG_NAME)_gitlab_runner_id_rsa
 
+DOCKER := $(shell which podman || which docker)
+
 DOCKER_BASE_IMAGE := registry.gitlab.com/mbarkhau/pretty-traceback/base
 
 GIT_HEAD_REV = $(shell git rev-parse --short HEAD)
@@ -302,7 +304,6 @@ git_hooks:
 lint_isort:
 	@printf "isort ...\n"
 	@$(DEV_ENV)/bin/isort \
-		--recursive \
 		--check-only \
 		--line-width=$(MAX_LINE_LEN) \
 		--project $(MODULE_NAME) \
@@ -334,15 +335,6 @@ lint_flake8:
 	@$(DEV_ENV)/bin/flake8_junit reports/flake8.txt reports/flake8.xml >> /dev/null;
 	@$(DEV_ENV_PY) scripts/exit_0_if_empty.py reports/flake8.txt;
 
-	@printf "\e[1F\e[9C ok\n"
-
-
-## Run pylint --errors-only.
-.PHONY: lint_pylint_errors
-lint_pylint_errors:
-	@printf "pylint ..\n";
-	@$(DEV_ENV)/bin/pylint --errors-only --jobs=4 --rcfile=setup.cfg \
-		src/ test/
 	@printf "\e[1F\e[9C ok\n"
 
 
@@ -405,7 +397,7 @@ test:
 		--cov-report term \
 		--html=reports/pytest/index.html \
 		--junitxml reports/pytest.xml \
-		-k "$${PYTEST_FILTER}" \
+		-k "$${PYTEST_FILTER-$${FLTR}}" \
 		$(shell cd src/ && ls -1 */__init__.py | awk '{ sub(/\/__init__.py/, "", $$1); print "--cov "$$1 }') \
 		test/ src/;
 
@@ -421,7 +413,10 @@ test:
 		env_py=$${env_py_paths[i]}; \
 		$${env_py} -m pip uninstall --yes $(PKG_NAME); \
 		$${env_py} -m pip install --upgrade build/test_wheel/*.whl; \
-		PYTHONPATH="" ENV=$${ENV-dev} $${env_py} -m pytest test/; \
+		PYTHONPATH="" ENV=$${ENV-dev} \
+		$${env_py} -m pytest \
+		-k "$${PYTEST_FILTER-$${FLTR}}" \
+		test/; \
 	done;
 
 	@rm -rf ".pytest_cache";
@@ -433,7 +428,6 @@ test:
 .PHONY: fmt_isort
 fmt_isort:
 	@$(DEV_ENV)/bin/isort \
-		--recursive \
 		--line-width=$(MAX_LINE_LEN) \
 		--project $(MODULE_NAME) \
 		src/ test/;
@@ -531,7 +525,7 @@ devtest:
 		--capture=no \
 		--exitfirst \
 		--failed-first \
-		-k "$${PYTEST_FILTER}" \
+		-k "$${PYTEST_FILTER-$${FLTR}}" \
 		test/ src/;
 
 	@rm -rf "src/__pycache__";
@@ -541,8 +535,8 @@ devtest:
 ## Run `make lint mypy test` using docker
 .PHONY: citest
 citest:
-	docker build --file Dockerfile --tag tmp_citest_$(PKG_NAME) .
-	docker run --tty tmp_citest_$(PKG_NAME) make lint mypy test
+	$(DOCKER) build --file Dockerfile --tag tmp_citest_$(PKG_NAME) .
+	$(DOCKER) run --tty tmp_citest_$(PKG_NAME) make lint mypy test
 
 
 ## -- Build/Deploy --
@@ -611,18 +605,18 @@ dist_publish: bump_version dist_build dist_upload
 .PHONY: docker_build
 docker_build:
 	@if [[ -f "$(RSA_KEY_PATH)" ]]; then \
-		docker build \
+		$(DOCKER) build \
 			--build-arg SSH_PRIVATE_RSA_KEY="$$(cat '$(RSA_KEY_PATH)')" \
 			--file docker_base.Dockerfile \
 			--tag $(DOCKER_BASE_IMAGE):$(DOCKER_IMAGE_VERSION) \
 			--tag $(DOCKER_BASE_IMAGE) \
 			.; \
 	else \
-		docker build \
+		$(DOCKER) build \
 			--file docker_base.Dockerfile \
 			--tag $(DOCKER_BASE_IMAGE):$(DOCKER_IMAGE_VERSION) \
 			--tag $(DOCKER_BASE_IMAGE) \
 			.; \
 	fi
 
-	docker push $(DOCKER_BASE_IMAGE)
+	$(DOCKER) push $(DOCKER_BASE_IMAGE)
