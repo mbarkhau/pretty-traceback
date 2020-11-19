@@ -157,7 +157,7 @@ def _init_aliases(entry_paths: typ.List[str]) -> AliasPrefixes:
         elif re.search(r"lib/Python\d.\d+\\lib$", py_path):
             alias = "<py>"
         elif py_path.startswith(PWD):
-            alias = "<pwd>"
+            alias   = "<pwd>"
             py_path = PWD
         else:
             alias = f"<p{alias_index}>"

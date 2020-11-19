@@ -191,9 +191,9 @@ def main():
         _, exc_value, traceback = sys.exc_info()
         tb_str = formatting.exc_to_traceback_str(exc_value, traceback, color=True)
         print(
-            tb_str
-            .replace("/home/mbarkhau/", "/home/user/")
-            .replace("miniconda3/envs/pretty-traceback_py38", "envs/py38")
+            tb_str.replace("/home/mbarkhau/", "/home/user/").replace(
+                "miniconda3/envs/pretty-traceback_py38", "envs/py38"
+            )
         )
 
 
