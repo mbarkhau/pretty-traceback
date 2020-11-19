@@ -135,7 +135,6 @@ def _ping(depth=0):
         try:
             sp.check_output(["command_that", "doesnt", "exist"])
         except (OSError, IOError):
-            raise
             try:
                 raise AttributeError()
             except AttributeError as attr_err:
@@ -188,7 +187,7 @@ def main():
 
     try:
         run_pingpong()
-    except Exception:
+    except OSError:
         _, exc_value, traceback = sys.exc_info()
         tb_str = formatting.exc_to_traceback_str(exc_value, traceback, color=True)
         print(tb_str)
