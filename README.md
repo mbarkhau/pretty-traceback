@@ -32,7 +32,7 @@ In other words, get this 😍
 
 <div align="center">
 <p align="center">
-  <img alt="logo" src="https://github.com/mbarkhau/pretty-traceback/raw/master/example_tb1.png">
+  <img alt="logo" src="https://github.com/mbarkhau/pretty-traceback/raw/master/example_tb4.png">
 </p>
 </div>
 
@@ -40,34 +40,40 @@ Instead of this 🤮
 
 ```
 Traceback (most recent call last):
-  File "test/test_formatting.py", line 202, in <module>
+  File "test/test_formatting.py", line 199, in <module>
     main()
-  File "test/test_formatting.py", line 189, in main
+  File "test/test_formatting.py", line 190, in main
     run_pingpong()
-  File "test/test_formatting.py", line 160, in run_pingpong
+  File "test/test_formatting.py", line 161, in run_pingpong
     sched3.run()
-  File "/home/user/envs/py38/sched.py", line 151, in run
+  File "/home/mbarkhau/miniconda3/envs/pretty-traceback_py38/lib/python3.8/sched.py", line 151, in run
     action(*argument, **kwargs)
-  File "/home/user/envs/py38/sched.py", line 151, in run
+  File "/home/mbarkhau/miniconda3/envs/pretty-traceback_py38/lib/python3.8/sched.py", line 151, in run
     action(*argument, **kwargs)
-  File "/home/user/envs/py38/sched.py", line 151, in run
+  File "/home/mbarkhau/miniconda3/envs/pretty-traceback_py38/lib/python3.8/sched.py", line 151, in run
     action(*argument, **kwargs)
-  File "test/test_formatting.py", line 150, in _ping
+  File "test/test_formatting.py", line 151, in _ping
     _pong(depth + 1)
   File "test/test_formatting.py", line 129, in _pong
     _ping(depth + 1)
-  File "test/test_formatting.py", line 148, in _ping
-    raise new_ex
-  File "test/test_formatting.py", line 139, in _ping
-    raise AttributeError()
-KeyError: 'Wrapping KeyError'
+  File "test/test_formatting.py", line 136, in _ping
+    sp.check_output(["command_that", "doesnt", "exist"])
+  File "/home/mbarkhau/miniconda3/envs/pretty-traceback_py38/lib/python3.8/subprocess.py", line 411, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+  File "/home/mbarkhau/miniconda3/envs/pretty-traceback_py38/lib/python3.8/subprocess.py", line 489, in run
+    with Popen(*popenargs, **kwargs) as process:
+  File "/home/mbarkhau/miniconda3/envs/pretty-traceback_py38/lib/python3.8/subprocess.py", line 854, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "/home/mbarkhau/miniconda3/envs/pretty-traceback_py38/lib/python3.8/subprocess.py", line 1702, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+FileNotFoundError: [Errno 2] No such file or directory: 'command_that'
 ```
 
 If your terminal is not wide enough, the long paths are replaced with aliases.
 
 <div align="center">
 <p align="center">
-  <img alt="logo" src="https://github.com/mbarkhau/pretty-traceback/raw/master/example_tb2.png">
+  <img alt="logo" src="https://github.com/mbarkhau/pretty-traceback/raw/master/example_tb5.png">
 </p>
 </div>
 
