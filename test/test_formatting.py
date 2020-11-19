@@ -131,7 +131,7 @@ def _pong(depth):
 
 def _ping(depth=0):
     # pylint:disable=raise-missing-from  ; that's the point of the test...
-    if depth > 2:
+    if depth > 1:
         try:
             sp.check_output(["command_that", "doesnt", "exist"])
         except (OSError, IOError):
@@ -190,7 +190,11 @@ def main():
     except KeyError:
         _, exc_value, traceback = sys.exc_info()
         tb_str = formatting.exc_to_traceback_str(exc_value, traceback, color=True)
-        print(tb_str)
+        print(
+            tb_str
+            .replace("/home/mbarkhau/", "/home/user/")
+            .replace("miniconda3/envs/pretty-traceback_py38", "envs/py38")
+        )
 
 
 if __name__ == '__main__':
