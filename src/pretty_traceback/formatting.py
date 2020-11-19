@@ -152,12 +152,13 @@ def _init_aliases(entry_paths: typ.List[str]) -> AliasPrefixes:
             alias = "<sitepkg>"
         elif py_path.endswith("dist-packages"):
             alias = "<distpkg>"
-        elif py_path == PWD:
-            alias = "<pwd>"
         elif re.search(r"lib/python\d.\d+$", py_path):
             alias = "<py>"
         elif re.search(r"lib/Python\d.\d+\\lib$", py_path):
             alias = "<py>"
+        elif py_path.startswith(PWD):
+            alias = "<pwd>"
+            py_path = PWD
         else:
             alias = f"<p{alias_index}>"
             alias_index += 1
