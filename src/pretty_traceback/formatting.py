@@ -45,11 +45,13 @@ def _get_terminal_width() -> int:
     return 0
 
 
-FMT_MODULE : str = colorama.Fore.CYAN    + colorama.Style.BRIGHT + "{0}" + colorama.Style.RESET_ALL
-FMT_CALL   : str = colorama.Fore.YELLOW  + colorama.Style.BRIGHT + "{0}" + colorama.Style.RESET_ALL
-FMT_LINENO : str = colorama.Fore.MAGENTA + colorama.Style.BRIGHT + "{0}" + colorama.Style.RESET_ALL
+FMT_MODULE : str = colorama.Fore.CYAN    + colorama.Style.NORMAL + "{0}" + colorama.Style.RESET_ALL
+FMT_CALL   : str = colorama.Fore.YELLOW  + colorama.Style.NORMAL + "{0}" + colorama.Style.RESET_ALL
+FMT_LINENO : str = colorama.Fore.MAGENTA + colorama.Style.NORMAL + "{0}" + colorama.Style.RESET_ALL
 FMT_CONTEXT: str = "{0}"
-FMT_ERROR  : str = colorama.Fore.RED + colorama.Style.BRIGHT + "{0}" + colorama.Style.RESET_ALL
+
+FMT_ERROR_NAME: str = colorama.Fore.RED     + colorama.Style.BRIGHT + "{0}" + colorama.Style.RESET_ALL
+FMT_ERROR_MSG : str = colorama.Style.BRIGHT + "{0}" + colorama.Style.RESET_ALL
 
 
 class Row(typ.NamedTuple):
@@ -295,7 +297,16 @@ def _rows_to_lines(rows: typ.List[PaddedRow], color: bool = False) -> typ.Iterab
             ": ",
             fmt_context.format(context),
         )
-        yield "".join(parts)
+        line = "".join(parts)
+
+        if alias:
+            if alias == "<pwd>":
+                line = line.replace(colorama.Style.NORMAL, colorama.Style.BRIGHT)
+        else:
+            if module.startswith(PWD):
+                line = line.replace(colorama.Style.NORMAL, colorama.Style.BRIGHT)
+
+        yield line
 
 
 def _traceback_to_entries(traceback: types.TracebackType) -> typ.Iterable[com.Entry]:
@@ -319,10 +330,11 @@ def _format_traceback(ctx: Context, traceback: com.Traceback, color: bool = Fals
     lines.append(com.TRACEBACK_HEAD)
     lines.extend(_rows_to_lines(padded_rows, color))
 
-    fmt_error  = FMT_ERROR if color else "{0}"
-    error_line = fmt_error.format(traceback.exc_name)
+    fmt_error_name = FMT_ERROR_NAME if color else "{0}"
+    error_line     = fmt_error_name.format(traceback.exc_name)
     if traceback.exc_msg:
-        error_line += ": " + traceback.exc_msg
+        fmt_error_msg = FMT_ERROR_MSG if color else "{0}"
+        error_line += ": " + fmt_error_msg.format(traceback.exc_msg)
 
     lines.append(error_line)
     return os.linesep.join(lines) + os.linesep

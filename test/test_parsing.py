@@ -6,6 +6,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import test.fixtures
+
 from pretty_traceback import parsing
 
 

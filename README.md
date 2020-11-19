@@ -68,7 +68,7 @@ Traceback (most recent call last):
 TypeError: no loader for this environment specified
 ```
 
-If you're terminal is not wide enough, the long paths are replaced with aliases.
+If your terminal is not wide enough, the long paths are replaced with aliases.
 
 <div align="center">
 <p align="center">

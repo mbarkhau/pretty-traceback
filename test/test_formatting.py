@@ -14,10 +14,10 @@ import sys
 import time
 import sched
 import subprocess as sp
+import test.fixtures
 
 import pytest
 
-import test.fixtures
 from pretty_traceback import common
 from pretty_traceback import parsing
 from pretty_traceback import formatting

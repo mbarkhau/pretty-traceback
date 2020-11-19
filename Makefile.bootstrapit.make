@@ -72,7 +72,7 @@ DEV_ENV_PY := $(DEV_ENV)/bin/python
 
 RSA_KEY_PATH := $(HOME)/.ssh/$(PKG_NAME)_gitlab_runner_id_rsa
 
-DOCKER := $(shell which podman || which docker)
+DOCKER := $(shell which docker || which podman)
 
 DOCKER_BASE_IMAGE := registry.gitlab.com/mbarkhau/pretty-traceback/base
 
