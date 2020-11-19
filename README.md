@@ -32,7 +32,7 @@ In other words, get this 😍
 
 <div align="center">
 <p align="center">
-  <img alt="logo" src="https://github.com/mbarkhau/pretty-traceback/raw/master/example_tb3.png">
+  <img alt="logo" src="https://github.com/mbarkhau/pretty-traceback/raw/master/example_tb1.png">
 </p>
 </div>
 
@@ -40,32 +40,27 @@ Instead of this 🤮
 
 ```
 Traceback (most recent call last):
-  File "/home/user/venvs/py38/bin/myproject", line 12, in <module>
-    sys.exit(cli())
-  File "/home/user/venvs/py38/lib/python3.8/site-packages/click/core.py", line 829, in __call__
-    return self.main(*args, **kwargs)
-  File "/home/user/venvs/py38/lib/python3.8/site-packages/click/core.py", line 782, in main
-    rv = self.invoke(ctx)
-  File "/home/user/venvs/py38/lib/python3.8/site-packages/click/core.py", line 1259, in invoke
-    return _process_result(sub_ctx.command.invoke(sub_ctx))
-  File "/home/user/venvs/py38/lib/python3.8/site-packages/click/core.py", line 1066, in invoke
-    return ctx.invoke(self.callback, **ctx.params)
-  File "/home/user/venvs/py38/lib/python3.8/site-packages/click/core.py", line 610, in invoke
-    return callback(*args, **kwargs)
-  File "/home/user/foss/myproject/src/myproject/cli.py", line 148, in build
-    lp_gen_docs.gen_html(built_ctx, html_dir)
-  File "/home/user/foss/myproject/src/myproject/gen_docs.py", line 295, in gen_html
-    wrapped_html = wrap_content_html(content_html, 'screen', meta, toc)
-  File "/home/user/foss/myproject/src/myproject/gen_docs.py", line 238, in wrap_content_html
-    result = tmpl.render(**ctx)
-  File "/home/user/venvs/py38/lib/python3.8/site-packages/jinja2/environment.py", line 1090, in render
-    self.environment.handle_exception()
-  File "/home/user/venvs/py38/lib/python3.8/site-packages/jinja2/environment.py", line 832, in handle_exception
-    reraise(*rewrite_traceback_stack(source=source))
-  File "/home/user/venvs/py38/lib/python3.8/site-packages/jinja2/_compat.py", line 28, in reraise
-    raise value.with_traceback(tb)
-  File "<template>", line 56, in top-level template code
-TypeError: no loader for this environment specified
+  File "test/test_formatting.py", line 202, in <module>
+    main()
+  File "test/test_formatting.py", line 189, in main
+    run_pingpong()
+  File "test/test_formatting.py", line 160, in run_pingpong
+    sched3.run()
+  File "/home/user/envs/py38/sched.py", line 151, in run
+    action(*argument, **kwargs)
+  File "/home/user/envs/py38/sched.py", line 151, in run
+    action(*argument, **kwargs)
+  File "/home/user/envs/py38/sched.py", line 151, in run
+    action(*argument, **kwargs)
+  File "test/test_formatting.py", line 150, in _ping
+    _pong(depth + 1)
+  File "test/test_formatting.py", line 129, in _pong
+    _ping(depth + 1)
+  File "test/test_formatting.py", line 148, in _ping
+    raise new_ex
+  File "test/test_formatting.py", line 139, in _ping
+    raise AttributeError()
+KeyError: 'Wrapping KeyError'
 ```
 
 If your terminal is not wide enough, the long paths are replaced with aliases.
@@ -131,7 +126,7 @@ except ImportError:
 
 <div align="center">
 <p align="center">
-  <img alt="logo" src="https://github.com/mbarkhau/pretty-traceback/raw/master/example_tb1.png">
+  <img alt="logo" src="https://github.com/mbarkhau/pretty-traceback/raw/master/example_tb3.png">
 </p>
 </div>
 
