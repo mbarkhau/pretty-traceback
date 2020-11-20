@@ -153,6 +153,7 @@ Pretty Traceback is heavily inspired by the backtrace module by [nir0s](https://
 - https://github.com/onelivesleft/PrettyErrors              <!-- 00873 -->
 - https://github.com/skorokithakis/tbvaccine                <!-- 00365 -->
 - https://github.com/aroberge/friendly-traceback            <!-- 00164 -->
+- https://github.com/HallerPatrick/frosch                   <!-- 00158 -->
 - https://github.com/nir0s/backtrace                        <!-- 00079 -->
 - https://github.com/staticshock/colored-traceback.py       <!-- 00039 -->
 - https://github.com/chillaranand/ptb                       <!-- 00006 -->
