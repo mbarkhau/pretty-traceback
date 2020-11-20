@@ -69,7 +69,7 @@ Traceback (most recent call last):
 FileNotFoundError: [Errno 2] No such file or directory: 'command_that'
 ```
 
-If your terminal is wide enough, the long paths preserved.
+If your terminal is wide enough, the long paths are preserved.
 
 <div align="center">
 <p align="center">
