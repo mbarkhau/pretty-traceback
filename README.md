@@ -150,6 +150,7 @@ Pretty Traceback is heavily inspired by the backtrace module by nir0s.
 
 - https://github.com/nir0s/backtrace
 - https://github.com/onelivesleft/PrettyErrors
+- https://github.com/qix-/better-exceptions
 - https://github.com/willmcgugan/rich#tracebacks
 - https://github.com/aroberge/friendly-traceback
 - https://github.com/laurb9/rich-traceback
