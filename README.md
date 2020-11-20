@@ -146,16 +146,18 @@ except ImportError:
 
 ## Alternatives
 
-Pretty Traceback is heavily inspired by the backtrace module by nir0s.
+Pretty Traceback is heavily inspired by the backtrace module by [nir0s](https://github.com/nir0s/backtrace) but there are many others (sorted by github stars):
 
-- https://github.com/nir0s/backtrace
-- https://github.com/onelivesleft/PrettyErrors
-- https://github.com/qix-/better-exceptions
-- https://github.com/willmcgugan/rich#tracebacks
-- https://github.com/aroberge/friendly-traceback
-- https://github.com/laurb9/rich-traceback
-- https://github.com/staticshock/colored-traceback.py
-- https://github.com/chillaranand/ptb
+- https://github.com/qix-/better-exceptions                 <!-- 03800 -->
+- https://github.com/cknd/stackprinter                      <!-- 01000 -->
+- https://github.com/onelivesleft/PrettyErrors              <!-- 00873 -->
+- https://github.com/skorokithakis/tbvaccine                <!-- 00365 -->
+- https://github.com/aroberge/friendly-traceback            <!-- 00164 -->
+- https://github.com/nir0s/backtrace                        <!-- 00079 -->
+- https://github.com/staticshock/colored-traceback.py       <!-- 00039 -->
+- https://github.com/chillaranand/ptb                       <!-- 00006 -->
+- https://github.com/laurb9/rich-traceback                  <!-- 00002 -->
+- https://github.com/willmcgugan/rich#tracebacks            <!-- 14000 -->
 
 [repo_ref]: https://github.com/mbarkhau/pretty-traceback
 
