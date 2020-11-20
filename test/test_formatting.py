@@ -14,6 +14,12 @@ import sys
 import time
 import sched
 import subprocess as sp
+
+try:
+    import __builtin__ as builtins
+except ImportError:
+    import builtins
+
 import test.fixtures
 
 import pytest
@@ -21,12 +27,6 @@ import pytest
 from pretty_traceback import common
 from pretty_traceback import parsing
 from pretty_traceback import formatting
-
-try:
-    import __builtin__ as builtins
-except ImportError:
-    import builtins
-
 
 text_type = getattr(builtins, 'unicode', str)
 
