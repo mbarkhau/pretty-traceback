@@ -19,11 +19,6 @@ Code Quality/CI:
 [![Code Style: sjfmt][style_img]][style_ref]
 
 
-|                 Name                |        role       |  since  | until |
-|-------------------------------------|-------------------|---------|-------|
-| Manuel Barkhau (mbarkhau@gmail.com) | author/maintainer | 2020-08 | -     |
-
-
 ## Overview
 
 Pretty Traceback groups together what belongs together, adds coloring and alignment. All of this makes it easier for you to see patterns and filter out the signal from the noise. This tabular format is best viewed in a wide terminal.
@@ -191,3 +186,10 @@ Pretty Traceback is heavily inspired by the backtrace module by [nir0s](https://
 
 [pyversions_img]: https://img.shields.io/pypi/pyversions/pretty-traceback.svg
 [pyversions_ref]: https://pypi.python.org/pypi/pretty-traceback
+
+
+## Contributors
+
+|                 Name                |        role       |  since  | until |
+|-------------------------------------|-------------------|---------|-------|
+| Manuel Barkhau (mbarkhau@gmail.com) | author/maintainer | 2020-08 | -     |
