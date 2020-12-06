@@ -12,6 +12,7 @@ import typing as typ
 import logging
 import traceback as tb
 import subprocess as sp
+import collections
 
 import colorama
 
@@ -330,6 +331,20 @@ def _format_traceback(ctx: Context, traceback: com.Traceback, color: bool = Fals
 
     lines.append(com.TRACEBACK_HEAD)
     lines.extend(_rows_to_lines(padded_rows, color))
+
+    if traceback.exc_name == 'RecursionError' and len(lines) > 100:
+        prelude_index = 0
+
+        line_counts: typ.Dict[str, int] = collections.defaultdict(int)
+        for i, line in enumerate(lines):
+            line_counts[line] += 1
+            if line_counts[line] == 3:
+                prelude_index = i
+                break
+
+        if prelude_index > 0:
+            num_omitted = len(lines) - prelude_index - 2
+            lines       = lines[:prelude_index] + [f"    ... {num_omitted} omitted lines"] + lines[-2:]
 
     fmt_error_name = FMT_ERROR_NAME if color else "{0}"
     error_line     = fmt_error_name.format(traceback.exc_name)

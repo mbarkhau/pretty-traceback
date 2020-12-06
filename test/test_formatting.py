@@ -13,6 +13,7 @@ import re
 import sys
 import time
 import sched
+import random
 import subprocess as sp
 
 try:
@@ -171,7 +172,36 @@ def test_pingpong():
         # TODO (mb 2020-08-14): compare to test.fixture.CHAINED_TRACEBACK
 
 
+def run_max_recursion():
+    def _mutual_recurse_a():
+        if random.random() > 0.5:
+            _mutual_recurse_b()
+        else:
+            _mutual_recurse_c()
+
+    def _mutual_recurse_b():
+        if random.random() > 0.5:
+            _mutual_recurse_a()
+        else:
+            _mutual_recurse_c()
+
+    def _mutual_recurse_c():
+        if random.random() > 0.5:
+            _mutual_recurse_a()
+        else:
+            _mutual_recurse_b()
+
+    try:
+        _mutual_recurse_a()
+    except RecursionError:
+        _exc_type, exc_value, traceback = sys.exc_info()
+        tb_str = formatting.exc_to_traceback_str(exc_value, traceback, color=True)
+        print(tb_str)
+
+
 def main():
+    run_max_recursion()
+
     formatting.PWD        = "/home/user/foss/myproject"
     formatting.TEST_PATHS = TEST_PATHS_WIN + TEST_PATHS_UNIX
     trace_strs            = test.fixtures.ALL_TRACEBACK_STRS
