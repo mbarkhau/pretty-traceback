@@ -1,5 +1,10 @@
 # Changelog for https://github.com/mbarkhau/pretty-traceback
 
+## 2020.1016
+
+- Shorten tracebacks for `RecursionError`
+
+
 ## 2020.1012
 
 - Improve alias selection
