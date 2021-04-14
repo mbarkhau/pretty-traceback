@@ -46,12 +46,12 @@ def _get_terminal_width() -> int:
     return 0
 
 
-FMT_MODULE : str = colorama.Fore.CYAN    + colorama.Style.NORMAL + "{0}" + colorama.Style.RESET_ALL
-FMT_CALL   : str = colorama.Fore.YELLOW  + colorama.Style.NORMAL + "{0}" + colorama.Style.RESET_ALL
+FMT_MODULE : str = colorama.Fore.CYAN + colorama.Style.NORMAL + "{0}" + colorama.Style.RESET_ALL
+FMT_CALL   : str = colorama.Fore.YELLOW + colorama.Style.NORMAL + "{0}" + colorama.Style.RESET_ALL
 FMT_LINENO : str = colorama.Fore.MAGENTA + colorama.Style.NORMAL + "{0}" + colorama.Style.RESET_ALL
 FMT_CONTEXT: str = "{0}"
 
-FMT_ERROR_NAME: str = colorama.Fore.RED     + colorama.Style.BRIGHT + "{0}" + colorama.Style.RESET_ALL
+FMT_ERROR_NAME: str = colorama.Fore.RED + colorama.Style.BRIGHT + "{0}" + colorama.Style.RESET_ALL
 FMT_ERROR_MSG : str = colorama.Style.BRIGHT + "{0}" + colorama.Style.RESET_ALL
 
 
@@ -67,17 +67,19 @@ class Row(typ.NamedTuple):
 
 class PaddedRow(typ.NamedTuple):
 
-    alias  : str
-    module : str
-    call   : str
-    lineno : str
-    context: str
+    alias       : str
+    short_module: str
+    full_module : str
+    call        : str
+    lineno      : str
+    context     : str
 
 
 Alias  = str
 Prefix = str
 
-AliasPrefixes = typ.List[typ.Tuple[Alias, Prefix]]
+AliasPrefix   = typ.Tuple[Alias, Prefix]
+AliasPrefixes = typ.List[AliasPrefix]
 
 
 class Context(typ.NamedTuple):
@@ -133,11 +135,10 @@ def _py_paths() -> typ.List[str]:
     return paths
 
 
-def _init_aliases(entry_paths: typ.List[str]) -> AliasPrefixes:
+def _iter_alias_prefixes(entry_paths: typ.List[str]) -> typ.Iterable[AliasPrefix]:
     _uniq_entry_paths = set(entry_paths)
 
     alias_index = 0
-    aliases: AliasPrefixes = []
     for py_path in _py_paths():
         is_path_used = False
         for entry_path in list(_uniq_entry_paths):
@@ -145,28 +146,24 @@ def _init_aliases(entry_paths: typ.List[str]) -> AliasPrefixes:
                 is_path_used = True
                 _uniq_entry_paths.remove(entry_path)
 
-        if not is_path_used:
-            continue
+        if is_path_used:
+            # TODO (mb 2020-08-16): more betterer paths
+            if py_path.endswith("site-packages"):
+                alias = "<sitepkg>"
+            elif py_path.endswith("dist-packages"):
+                alias = "<distpkg>"
+            elif re.search(r"lib/python\d.\d+$", py_path):
+                alias = "<py>"
+            elif re.search(r"lib/Python\d.\d+\\lib$", py_path):
+                alias = "<py>"
+            elif py_path.startswith(PWD):
+                alias   = "<pwd>"
+                py_path = PWD
+            else:
+                alias = f"<p{alias_index}>"
+                alias_index += 1
 
-        # TODO (mb 2020-08-16): more betterer paths
-        if py_path.endswith("site-packages"):
-            alias = "<sitepkg>"
-        elif py_path.endswith("dist-packages"):
-            alias = "<distpkg>"
-        elif re.search(r"lib/python\d.\d+$", py_path):
-            alias = "<py>"
-        elif re.search(r"lib/Python\d.\d+\\lib$", py_path):
-            alias = "<py>"
-        elif py_path.startswith(PWD):
-            alias   = "<pwd>"
-            py_path = PWD
-        else:
-            alias = f"<p{alias_index}>"
-            alias_index += 1
-
-        aliases.append((alias, py_path))
-
-    return aliases
+            yield (alias, py_path)
 
 
 def _iter_entry_rows(
@@ -185,18 +182,23 @@ def _iter_entry_rows(
         #   but it's not shortened using an alias yet either.
         if abs_module.endswith(module):
             for alias, alias_path in aliases:
-                if not abs_module.startswith(alias_path):
-                    continue
+                if abs_module.startswith(alias_path):
+                    new_module_short = abs_module[len(alias_path) :]
 
-                new_module_short = abs_module[len(alias_path) :]
+                    new_len = len(new_module_short) + len(alias)
+                    old_len = len(module_short) + len(used_alias)
+                    if new_len < old_len:
+                        used_alias   = alias
+                        module_short = new_module_short
 
-                new_len = len(new_module_short) + len(alias)
-                old_len = len(module_short    ) + len(used_alias)
-                if new_len < old_len:
-                    used_alias   = alias
-                    module_short = new_module_short
-
-        yield Row(used_alias, module_short, module_full, call or "", lineno or "", context or "")
+        yield Row(
+            used_alias,
+            module_short,
+            module_full,
+            call or "",
+            lineno or "",
+            context or "",
+        )
 
 
 def _init_entries_context(entries: com.Entries, term_width: typ.Optional[int] = None) -> Context:
@@ -206,7 +208,7 @@ def _init_entries_context(entries: com.Entries, term_width: typ.Optional[int] = 
         _term_width = term_width
 
     entry_paths = list(_iter_entry_paths(entries))
-    aliases     = _init_aliases(entry_paths)
+    aliases     = list(_iter_alias_prefixes(entry_paths))
 
     # NOTE (mb 2020-10-04): When calculating widths of a column, we care more
     #   about alignment than staying below the max_row_width. The limits are
@@ -219,11 +221,11 @@ def _init_entries_context(entries: com.Entries, term_width: typ.Optional[int] = 
     rows = list(_iter_entry_rows(aliases, entry_paths, entries))
 
     if rows:
-        max_short_module_len = max(len(row.alias      ) + len(row.short_module) for row in rows)
+        max_short_module_len = max(len(row.alias) + len(row.short_module) for row in rows)
         max_full_module_len  = max(len(row.full_module) for row in rows)
 
-        max_lineno_len  = max(len(row.lineno ) for row in rows)
-        max_call_len    = max(len(row.call   ) for row in rows)
+        max_lineno_len  = max(len(row.lineno) for row in rows)
+        max_call_len    = max(len(row.call) for row in rows)
         max_context_len = max(len(row.context) for row in rows)
     else:
         max_short_module_len = 0
@@ -254,22 +256,24 @@ def _padded_rows(ctx: Context) -> typ.Iterable[PaddedRow]:
     # This will mutate rows (updating strings with added padding)
 
     for row in ctx.rows:
-        alias, module_short, module_full, call, lineno, context = row
-
         if ctx.is_wide_mode:
-            alias         = ""
-            padded_module = module_full.ljust(ctx.max_full_module_len)
+            short_module = ""
+            full_module  = row.full_module.ljust(ctx.max_full_module_len)
         else:
-            padded_module = module_short.ljust(ctx.max_short_module_len - len(alias))
+            short_module = row.short_module.ljust(ctx.max_short_module_len - len(row.alias))
+            full_module  = ""
 
-        if ctx.is_wide_mode:
-            padded_call = call.ljust(ctx.max_call_len)
-        else:
-            padded_call = call.ljust(ctx.max_call_len)
+        padded_call   = row.call.ljust(ctx.max_call_len)
+        padded_lineno = row.lineno.rjust(ctx.max_lineno_len)
 
-        padded_lineno = lineno.rjust(ctx.max_lineno_len)
-
-        yield PaddedRow(alias, padded_module, padded_call, padded_lineno, context)
+        yield PaddedRow(
+            row.alias,
+            short_module,
+            full_module,
+            padded_call,
+            padded_lineno,
+            row.context,
+        )
 
 
 def _aliases_to_lines(ctx: Context, color: bool = False) -> typ.Iterable[str]:
@@ -287,10 +291,17 @@ def _rows_to_lines(rows: typ.List[PaddedRow], color: bool = False) -> typ.Iterab
     fmt_lineno  = FMT_LINENO if color else "{0}"
     fmt_context = FMT_CONTEXT if color else "{0}"
 
-    for alias, module, call, lineno, context in rows:
+    for alias, short_module, full_module, call, lineno, context in rows:
+        if short_module:
+            _alias = alias
+            module = short_module
+        else:
+            _alias = ""
+            module = full_module
+
         parts = (
             "    ",
-            alias,
+            _alias,
             fmt_module.format(module),
             "  ",
             fmt_call.format(call),
@@ -301,14 +312,10 @@ def _rows_to_lines(rows: typ.List[PaddedRow], color: bool = False) -> typ.Iterab
         )
         line = "".join(parts)
 
-        if alias:
-            if alias == "<pwd>":
-                line = line.replace(colorama.Style.NORMAL, colorama.Style.BRIGHT)
+        if alias == "<pwd>":
+            yield line.replace(colorama.Style.NORMAL, colorama.Style.BRIGHT)
         else:
-            if module.startswith(PWD):
-                line = line.replace(colorama.Style.NORMAL, colorama.Style.BRIGHT)
-
-        yield line
+            yield line
 
 
 def _traceback_to_entries(traceback: types.TracebackType) -> typ.Iterable[com.Entry]:
@@ -388,11 +395,11 @@ def exc_to_traceback_str(
     #   https://stackoverflow.com/questions/11235932/
     tracebacks: typ.List[com.Traceback] = []
 
-    cur_exc_value: BaseException       = exc_value
+    cur_exc_value: BaseException = exc_value
     cur_traceback: types.TracebackType = traceback
 
     while cur_exc_value:
-        next_cause   = getattr(cur_exc_value, '__cause__'  , None)
+        next_cause   = getattr(cur_exc_value, '__cause__', None)
         next_context = getattr(cur_exc_value, '__context__', None)
 
         tb_tup = com.Traceback(

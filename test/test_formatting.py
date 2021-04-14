@@ -217,7 +217,7 @@ def main():
 
     try:
         run_pingpong()
-    except OSError:
+    except KeyError:
         _, exc_value, traceback = sys.exc_info()
         tb_str = formatting.exc_to_traceback_str(exc_value, traceback, color=True)
         print(tb_str)
