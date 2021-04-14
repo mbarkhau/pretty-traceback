@@ -1,5 +1,10 @@
 # Changelog for https://github.com/mbarkhau/pretty-traceback
 
+## 2021.1017
+
+- Fix highlight in wide mode
+
+
 ## 2020.1016
 
 - Shorten tracebacks for `RecursionError`
