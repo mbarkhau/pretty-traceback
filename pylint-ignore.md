@@ -1,6 +1,6 @@
 # Pylint-Ignore
 
-**WARNING: This file is programatically generated.**
+**WARNING: This file is programmatically generated.**
 
 This file is parsed by [`pylint-ignore`](https://pypi.org/project/pylint-ignore/)
 to determine which
@@ -36,7 +36,7 @@ The recommended approach to using `pylint-ignore` is:
 
 ```
   10: import pretty_traceback.common as com
-  11:
+  11: 
 > 12: # TODO (mb 2020-08-12): path/module with doublequotes in them.
   13: #   Not even sure what python does with that.
   14:
@@ -50,30 +50,30 @@ The recommended approach to using `pylint-ignore` is:
 - `date   : 2020-08-16T21:13:16`
 
 ```
-  134: def _init_aliases(entry_paths: typ.List[str]) -> AliasPrefixes:
+  138: def _iter_alias_prefixes(entry_paths: typ.List[str]) -> typ.Iterable[AliasPrefix]:
   ...
-  148:             continue
-  149:
-> 150:         # TODO (mb 2020-08-16): more betterer paths
-  151:         if path.endswith("site-packages"):
-  152:             alias = "<sitepkg>"
+  148: 
+  149:         if is_path_used:
+> 150:             # TODO (mb 2020-08-16): more betterer paths
+  151:             if py_path.endswith("site-packages"):
+  152:                 alias = "<sitepkg>"
 ```
 
 
-## File test/test_formatting.py - Line 171 - W0511 (fixme)
+## File test/test_formatting.py - Line 172 - W0511 (fixme)
 
 - `message: TODO (mb 2020-08-14): compare to test.fixture.CHAINED_TRACEBACK`
 - `author : Manuel Barkhau <mbarkhau@gmail.com>`
 - `date   : 2020-08-16T21:13:16`
 
 ```
-  163: def test_pingpong():
+  164: def test_pingpong():
   ...
-  169:         tb_str = formatting.exc_to_traceback_str(exc_value, traceback, color=False)
-  170:         assert isinstance(tb_str, text_type)
-> 171:         # TODO (mb 2020-08-14): compare to test.fixture.CHAINED_TRACEBACK
-  172:
-  173:
+  170:         tb_str = formatting.exc_to_traceback_str(exc_value, traceback, color=False)
+  171:         assert isinstance(tb_str, text_type)
+> 172:         # TODO (mb 2020-08-14): compare to test.fixture.CHAINED_TRACEBACK
+  173: 
+  174:
 ```
 
 

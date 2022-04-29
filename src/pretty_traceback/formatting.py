@@ -324,7 +324,7 @@ def _traceback_to_entries(traceback: types.TracebackType) -> typ.Iterable[com.En
         module  = entry[0]
         call    = entry[2]
         lineno  = str(entry[1])
-        context = entry[3]
+        context = entry[3] or ""
         yield com.Entry(module, call, lineno, context)
 
 
@@ -385,6 +385,10 @@ def format_tracebacks(tracebacks: typ.List[com.Traceback], color: bool = False) 
     return os.linesep.join(traceback_strs).strip()
 
 
+def get_tb_attr(obj: object) -> types.TracebackType:
+    return typ.cast(types.TracebackType, obj.__traceback__)
+
+
 def exc_to_traceback_str(
     exc_value: BaseException,
     traceback: types.TracebackType,
@@ -414,10 +418,10 @@ def exc_to_traceback_str(
 
         if next_cause:
             cur_exc_value = next_cause
-            cur_traceback = getattr(next_cause, '__traceback__', None)
+            cur_traceback = get_tb_attr(next_cause)
         elif next_context:
             cur_exc_value = next_context
-            cur_traceback = getattr(next_context, '__traceback__', None)
+            cur_traceback = get_tb_attr(next_context)
         else:
             break
 
