@@ -50,23 +50,11 @@ classifiers = [
 ]
 
 
-package_dir = {"": "src"}
-
-
-is_bdist = any(arg.startswith("bdist") for arg in sys.argv)
-
-if is_bdist:
-    try:
-        import lib3to6
-        package_dir = lib3to6.fix(package_dir)
-    except ImportError:
-        if sys.version_info < (3, 6):
-            raise
-        else:
-            sys.stderr.write((
-                "WARNING: Creating non-universal bdist, "
-                "this should only be used for development.\n"
-            ))
+try:
+    import lib3to6
+    distclass = lib3to6.Distribution
+except ImportError:
+    distclass = setuptools.dist.Distribution
 
 
 setuptools.setup(

@@ -6,7 +6,7 @@ PACKAGE_NAME := pretty-traceback
 # - `make ipy`
 # - `make lint`
 # - `make devtest`
-DEVELOPMENT_PYTHON_VERSION := python=3.8
+DEVELOPMENT_PYTHON_VERSION := python=3.10
 
 # These must be valid (space separated) conda package names.
 # A separate conda environment will be created for each of these.
@@ -18,7 +18,7 @@ DEVELOPMENT_PYTHON_VERSION := python=3.8
 # - python=3.7
 # - pypy2.7
 # - pypy3.5
-SUPPORTED_PYTHON_VERSIONS := python=3.8 python=3.6 pypy3.5 python=2.7
+SUPPORTED_PYTHON_VERSIONS := python=3.10 python=3.7 pypy3.6 python=2.7
 
 include Makefile.bootstrapit.make
 

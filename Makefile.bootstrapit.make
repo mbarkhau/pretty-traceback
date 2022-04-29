@@ -57,10 +57,6 @@ CONDA_ENV_BIN_PYTHON_PATHS := \
 empty :=
 literal_space := $(empty) $(empty)
 
-# BDIST_WHEEL_PYTHON_TAG := py2.py3
-BDIST_WHEEL_PYTHON_TAG := \
-	$(subst python,py,$(subst $(literal_space),.,$(subst .,,$(subst =,,$(SUPPORTED_PYTHON_VERSIONS)))))
-
 SDIST_FILE_CMD = ls -1t dist/*.tar.gz | head -n 1
 
 BDIST_WHEEL_FILE_CMD = ls -1t dist/*.whl | head -n 1
@@ -382,6 +378,7 @@ test:
 	@rm -rf ".pytest_cache";
 	@rm -rf "src/__pycache__";
 	@rm -rf "test/__pycache__";
+	@rm -rf "build/lib/";
 	@rm -rf "reports/testcov/";
 	@rm -f "reports/pytest*";
 	@mkdir -p "reports/";
@@ -405,7 +402,7 @@ test:
 
 	rm -rf build/test_wheel;
 	mkdir -p build/test_wheel;
-	$(DEV_ENV_PY) setup.py bdist_wheel --python-tag=$(BDIST_WHEEL_PYTHON_TAG) \
+	$(DEV_ENV_PY) setup.py bdist_wheel --python-tag=py2.py3 \
 		--dist-dir build/test_wheel;
 
 	IFS=' ' read -r -a env_py_paths <<< "$(CONDA_ENV_BIN_PYTHON_PATHS)"; \
@@ -569,7 +566,7 @@ bump_version:
 .PHONY: dist_build
 dist_build:
 	$(DEV_ENV_PY) setup.py sdist;
-	$(DEV_ENV_PY) setup.py bdist_wheel --python-tag=$(BDIST_WHEEL_PYTHON_TAG);
+	$(DEV_ENV_PY) setup.py bdist_wheel --python-tag=py2.py3;
 	@rm -rf src/*.egg-info
 
 
