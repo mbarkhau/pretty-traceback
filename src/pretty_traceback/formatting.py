@@ -1,7 +1,7 @@
 # This file is part of the pretty-traceback project
 # https://github.com/mbarkhau/pretty-traceback
 #
-# Copyright (c) 2020 Manuel Barkhau (mbarkhau@gmail.com) - MIT License
+# Copyright (c) 2020-2022 Manuel Barkhau (mbarkhau@gmail.com) - MIT License
 # SPDX-License-Identifier: MIT
 
 import os
@@ -174,7 +174,7 @@ def _iter_entry_rows(
         module_full  = abs_module
         module_short = abs_module
 
-        module, call, lineno, context = entry
+        module = entry.module
         if module.startswith("." + os.sep):
             module = module[2:]
 
@@ -195,9 +195,9 @@ def _iter_entry_rows(
             used_alias,
             module_short,
             module_full,
-            call or "",
-            lineno or "",
-            context or "",
+            entry.call or "",
+            entry.lineno or "",
+            entry.src_ctx or "",
         )
 
 
@@ -386,7 +386,7 @@ def format_tracebacks(tracebacks: typ.List[com.Traceback], color: bool = False) 
 
 
 def get_tb_attr(ex: BaseException) -> types.TracebackType:
-    return typ.cast(types.TracebackType, ex.__traceback__)
+    return typ.cast(types.TracebackType, getattr(ex, '__traceback__', None))
 
 
 def exc_to_traceback_str(
