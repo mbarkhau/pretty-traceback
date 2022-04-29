@@ -80,8 +80,10 @@ setuptools.setup(
     description="Human readable stacktraces.",
     long_description=long_description,
     long_description_content_type="text/markdown",
+
+    distclass=distclass,
     packages=setuptools.find_packages("src/"),
-    package_dir=package_dir,
+    package_dir={"": "src"},
     install_requires=install_requires,
     python_requires=">=2.7",
     zip_safe=True,

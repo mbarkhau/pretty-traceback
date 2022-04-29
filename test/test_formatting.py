@@ -74,7 +74,7 @@ def test_formatting_basic():
         tracebacks = parsing.parse_tracebacks(trace_str)
         for traceback in tracebacks:
             tb_str         = formatting.format_traceback(traceback)
-            tb_entries_str = tb_str.rsplit(common.TRACEBACK_HEAD, maxsplit=1)[-1]
+            tb_entries_str = tb_str.split(common.TRACEBACK_HEAD)[-1]
             tb_entry_lines = tb_entries_str.splitlines()
             assert traceback.exc_name in tb_entry_lines[-1]
             assert traceback.exc_msg  in tb_entry_lines[-1]
@@ -107,9 +107,7 @@ def test_formatting(fixture_index, term_width, pathsep_re, env_setup):
         pathsep_offsets = []
         lineno_offsets  = []
 
-        tb_lines = (
-            tb_str.rsplit(common.TRACEBACK_HEAD, maxsplit=1)[-1].strip("\n").splitlines()[:-1]
-        )
+        tb_lines = tb_str.split(common.TRACEBACK_HEAD)[-1].strip("\n").splitlines()[:-1]
         for line in tb_lines:
             assert line.startswith("    "), repr(line)
 
