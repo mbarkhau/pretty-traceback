@@ -385,8 +385,8 @@ def format_tracebacks(tracebacks: typ.List[com.Traceback], color: bool = False) 
     return os.linesep.join(traceback_strs).strip()
 
 
-def get_tb_attr(obj: object) -> types.TracebackType:
-    return typ.cast(types.TracebackType, obj.__traceback__)
+def get_tb_attr(ex: BaseException) -> types.TracebackType:
+    return typ.cast(types.TracebackType, ex.__traceback__)
 
 
 def exc_to_traceback_str(
