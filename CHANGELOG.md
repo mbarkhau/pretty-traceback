@@ -1,5 +1,12 @@
 # Changelog for https://github.com/mbarkhau/pretty-traceback
 
+## 2022.1018
+
+- Add final newline to output. See [gh#3][gh3]
+
+[gh3]: https://github.com/mbarkhau/pretty-traceback/issues/3
+
+
 ## 2021.1017
 
 - Fix highlight in wide mode
