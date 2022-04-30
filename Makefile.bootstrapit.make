@@ -241,9 +241,9 @@ helpverbose:
 ## -- Project Setup --
 
 
-## Delete conda envs and cache 💩
-.PHONY: clean
-clean:
+## Delete conda envs
+.PHONY: clean_conda
+clean_conda:
 	@for env_name in $(CONDA_ENV_NAMES); do \
 		env_py="$(ENV_PREFIX)/$${env_name}/bin/python"; \
 		if [[ -f $${env_py} ]]; then \
@@ -251,6 +251,10 @@ clean:
 		fi; \
 	done
 
+
+## Clean temporary files
+.PHONY: clean
+clean:
 	rm -f build/envs.txt
 	rm -f build/deps.txt
 	rm -rf vendor/
@@ -565,6 +569,13 @@ bump_version:
 ## Create python sdist and bdist_wheel files
 .PHONY: dist_build
 dist_build:
+	@rm -rf ".pytest_cache";
+	@rm -rf "src/__pycache__";
+	@rm -rf "test/__pycache__";
+	@rm -rf "build/lib/";
+	@rm -rf "reports/testcov/";
+	@rm -f "reports/pytest*";
+
 	$(DEV_ENV_PY) setup.py sdist;
 	$(DEV_ENV_PY) setup.py bdist_wheel --python-tag=py2.py3;
 	@rm -rf src/*.egg-info
