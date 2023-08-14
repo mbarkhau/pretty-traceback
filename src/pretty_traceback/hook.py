@@ -56,8 +56,9 @@ def install(
         color = False
 
     # pylint:disable=comparison-with-callable   ; intentional
-    is_default_exepthook = sys.excepthook == sys.__excepthook__
-    if only_hook_if_default_excepthook and not is_default_exepthook:
+    is_default_excepthook = sys.excepthook == sys.__excepthook__
+    if only_hook_if_default_excepthook and not is_default_excepthook:
+        print("Not installing pretty_traceback excepthook (already installed)", file=sys.stderr)
         return
 
     sys.excepthook = init_excepthook(color=color)
