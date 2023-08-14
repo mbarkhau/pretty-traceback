@@ -263,6 +263,7 @@ def _padded_rows(ctx: Context) -> typ.Iterable[PaddedRow]:
             short_module = row.short_module.ljust(ctx.max_short_module_len - len(row.alias))
             full_module  = ""
 
+        # the max lengths are calculated upstream in `_init_entries_context`
         padded_call   = row.call.ljust(ctx.max_call_len)
         padded_lineno = row.lineno.rjust(ctx.max_lineno_len)
 
@@ -285,12 +286,14 @@ def _aliases_to_lines(ctx: Context, color: bool = False) -> typ.Iterable[str]:
 
 
 def _rows_to_lines(rows: typ.List[PaddedRow], color: bool = False) -> typ.Iterable[str]:
+
     # apply colors and additional separators/ spacing
     fmt_module  = FMT_MODULE if color else "{0}"
     fmt_call    = FMT_CALL if color else "{0}"
     fmt_lineno  = FMT_LINENO if color else "{0}"
     fmt_context = FMT_CONTEXT if color else "{0}"
 
+    # padding has already been added to the components at this point
     for alias, short_module, full_module, call, lineno, context in rows:
         if short_module:
             _alias = alias
@@ -300,16 +303,19 @@ def _rows_to_lines(rows: typ.List[PaddedRow], color: bool = False) -> typ.Iterab
             module = full_module
 
         parts = (
-            "    ",
+            " ",
             _alias,
-            fmt_module.format(module),
+            " ",
+            # include the line number with the file so VS Code (and other similar systems) can easily jump to the line
+            fmt_module.format(module.strip()) + ":" + fmt_lineno.format(lineno.strip()),
             "  ",
             fmt_call.format(call),
-            "  ",
-            fmt_lineno.format(lineno),
-            ": ",
             fmt_context.format(context),
         )
+
+        # original is pretty_traceback.formatting._padded_rows
+        # TODO need to add left passing to the trace, but this is workable for now
+
         line = "".join(parts)
 
         if alias == "<pwd>":
