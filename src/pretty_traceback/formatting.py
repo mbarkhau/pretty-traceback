@@ -430,7 +430,7 @@ def exc_to_traceback_str(
     return format_tracebacks(tracebacks, color)
 
 
-class LoggingFormaterMixin:
+class LoggingFormatterMixin:
     # pylint:disable=invalid-name   # logging module naming convention
     # pylint:disable=no-self-use    # because mixin
 
@@ -439,6 +439,6 @@ class LoggingFormaterMixin:
         return exc_to_traceback_str(exc_value, traceback, color=True)
 
 
-class LoggingFormatter(LoggingFormaterMixin, logging.Formatter):
+class LoggingFormatter(LoggingFormatterMixin, logging.Formatter):
 
     pass
