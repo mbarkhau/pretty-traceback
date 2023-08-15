@@ -105,7 +105,6 @@ def test_formatting(fixture_index, term_width, pathsep_re, env_setup):
         tb_str = formatting._format_traceback(ctx, traceback)
 
         pathsep_offsets = []
-        lineno_offsets  = []
 
         tb_lines = tb_str.split(common.TRACEBACK_HEAD)[-1].strip("\n").splitlines()[:-1]
         for line in tb_lines:
