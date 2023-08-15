@@ -19,6 +19,7 @@ flake8-builtins
 flake8-comprehensions
 flake8-junit-report
 flake8-2020
+pylint==2.12.1
 pylint-ignore>=2020.1013
 mypy>=0.790
 isort; python_version >= "3.5"
