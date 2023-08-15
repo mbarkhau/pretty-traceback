@@ -90,10 +90,10 @@ def test_formatting_basic():
 
 
 FORMATTING_TEST_CASES = [
-    (0,   10, r"    \<\w+\>.*\.py[ ]+"),
-    (1,   10, r"    \<\w+\>.*\.py[ ]+"),
-    (0, 1000, r"    .*\.py[ ]+"),
-    (1, 1000, r"    .*\.py[ ]+"),
+    (0,   10, r"    \<\w+\>.*\.py:\d+[ ]+"),
+    (1,   10, r"    \<\w+\>.*\.py:\d+[ ]+"),
+    (0, 1000, r"    .*\.py:\d+[ ]+"),
+    (1, 1000, r"    .*\.py:\d+[ ]+"),
 ]
 
 
@@ -116,14 +116,8 @@ def test_formatting(fixture_index, term_width, pathsep_re, env_setup):
                 _, end = pathsep_match.span()
                 pathsep_offsets.append(end)
 
-            lineno_match = re.search(r"\d+:", line)
-            if lineno_match:
-                _, end = lineno_match.span()
-                lineno_offsets.append(end)
-
         # all line numbers are aligned to the right at the same offset
         assert len(pathsep_offsets) > 3 and len(set(pathsep_offsets)) == 1
-        assert len(lineno_offsets ) > 3 and len(set(lineno_offsets )) == 1
 
 
 def _pong(depth):

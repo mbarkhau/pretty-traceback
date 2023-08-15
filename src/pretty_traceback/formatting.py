@@ -265,7 +265,7 @@ def _padded_rows(ctx: Context) -> typ.Iterable[PaddedRow]:
 
         # the max lengths are calculated upstream in `_init_entries_context`
         padded_call   = row.call.ljust(ctx.max_call_len)
-        padded_lineno = row.lineno.rjust(ctx.max_lineno_len)
+        padded_lineno = row.lineno.ljust(ctx.max_lineno_len)
 
         yield PaddedRow(
             row.alias,
@@ -302,19 +302,24 @@ def _rows_to_lines(rows: typ.List[PaddedRow], color: bool = False) -> typ.Iterab
             _alias = ""
             module = full_module
 
+        # append line number to file so editors can jump to the line
+        bare_module    = module.strip()
+        bare_lineno    = lineno.strip()
+        module_padding = " " * (len(module) - len(bare_module) + len(lineno) - len(bare_lineno))
+
         parts = (
-            " ",
+            "    ",
             _alias,
             " ",
-            # include the line number with the file so VS Code (and other similar systems) can easily jump to the line
-            fmt_module.format(module.strip()) + ":" + fmt_lineno.format(lineno.strip()),
+            fmt_module.format(bare_module),
+            ":",
+            fmt_lineno.format(bare_lineno),
+            module_padding,
             "  ",
             fmt_call.format(call),
+            "  ",
             fmt_context.format(context),
         )
-
-        # original is pretty_traceback.formatting._padded_rows
-        # TODO need to add left passing to the trace, but this is workable for now
 
         line = "".join(parts)
 
