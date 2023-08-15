@@ -33,7 +33,8 @@ pytest; python_version >= "3.5"
 pytest-cov
 # https://github.com/pytest-dev/pytest-html/blob/master/CHANGES.rst
 # pytest-html 2.0+ doesn't support python2.7
-pytest-html<2.0
+pytest-html<2.0; python_version < "3.5"
+pytest-html==3.2; python_version >= "3.5"
 
 readme_renderer[md]
 twine
