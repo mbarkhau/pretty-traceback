@@ -1,5 +1,12 @@
 # Changelog for https://github.com/mbarkhau/pretty-traceback
 
+## 2023.1019
+
+- Update: Append lineno to filename so it can be parsed by editors/IDEs. [gh#8][gh8]
+
+[gh8]: https://github.com/mbarkhau/pretty-traceback/pull/8
+
+
 ## 2022.1018
 
 - Add final newline to output. See [gh#3][gh3]
