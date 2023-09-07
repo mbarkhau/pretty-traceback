@@ -9,7 +9,7 @@ from .hook import uninstall
 from .formatting import LoggingFormatter
 from .formatting import LoggingFormatterMixin
 
-__version__ = "2023.1019"
+__version__ = "2023.1020"
 
 
 # retain typo for backward compatibility
