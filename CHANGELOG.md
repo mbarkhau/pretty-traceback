@@ -1,5 +1,12 @@
 # Changelog for https://github.com/mbarkhau/pretty-traceback
 
+## 2023.1020
+
+- Fix: Prevent errors in non-tty environments [gh#8][gh8]
+
+[gh9]: https://github.com/mbarkhau/pretty-traceback/issues/9
+
+
 ## 2023.1019
 
 - Update: Append lineno to filename so it can be parsed by editors/IDEs. [gh#8][gh8]
