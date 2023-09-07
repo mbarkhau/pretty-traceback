@@ -18,6 +18,8 @@ import colorama
 
 import pretty_traceback.common as com
 
+DEFAULT_COLUMNS = 80
+
 
 def _get_terminal_width() -> int:
     try:
@@ -26,6 +28,9 @@ def _get_terminal_width() -> int:
         return columns
     except (KeyError, ValueError):
         pass
+
+    if not sys.stdout.isatty():
+        return DEFAULT_COLUMNS
 
     if hasattr(os, 'get_terminal_size'):
         try:
@@ -43,7 +48,7 @@ def _get_terminal_width() -> int:
     except IOError:
         pass
 
-    return 0
+    return DEFAULT_COLUMNS
 
 
 FMT_MODULE : str = colorama.Fore.CYAN + colorama.Style.NORMAL + "{0}" + colorama.Style.RESET_ALL
