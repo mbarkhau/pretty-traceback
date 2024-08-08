@@ -46,3 +46,5 @@ graphviz
 
 # run failed tests first
 pytest-cache
+
+black

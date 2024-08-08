@@ -29,7 +29,7 @@ from pretty_traceback import common
 from pretty_traceback import parsing
 from pretty_traceback import formatting
 
-text_type = getattr(builtins, 'unicode', str)
+text_type = getattr(builtins, "unicode", str)
 
 
 TEST_PATHS_WIN = [
@@ -63,7 +63,7 @@ TEST_PATHS_UNIX = [
 @pytest.fixture
 def env_setup():
     formatting.TEST_PATHS = TEST_PATHS_WIN + TEST_PATHS_UNIX
-    formatting.PWD        = "/home/user/foss/myproject"
+    formatting.PWD = "/home/user/foss/myproject"
     yield
     del formatting.TEST_PATHS[:]
     formatting.PWD = os.getcwd()
@@ -73,25 +73,25 @@ def test_formatting_basic():
     for trace_str in test.fixtures.ALL_TRACEBACK_STRS:
         tracebacks = parsing.parse_tracebacks(trace_str)
         for traceback in tracebacks:
-            tb_str         = formatting.format_traceback(traceback)
+            tb_str = formatting.format_traceback(traceback)
             tb_entries_str = tb_str.split(common.TRACEBACK_HEAD)[-1]
             tb_entry_lines = tb_entries_str.splitlines()
             assert traceback.exc_name in tb_entry_lines[-1]
-            assert traceback.exc_msg  in tb_entry_lines[-1]
+            assert traceback.exc_msg in tb_entry_lines[-1]
             entry_lines = [line for line in tb_entry_lines if line.startswith("    ")]
             assert len(entry_lines) == len(traceback.entries)
             for line, entry in zip(entry_lines, traceback.entries):
-                assert entry.lineno  in line
+                assert entry.lineno in line
                 assert entry.src_ctx in line
-                assert entry.call    in line
+                assert entry.call in line
 
                 fname = entry.module.rsplit("/")[-1].rsplit("\\")[-1]
                 assert fname in line
 
 
 FORMATTING_TEST_CASES = [
-    (0,   10, r"    \<\w+\>.*\.py:\d+[ ]+"),
-    (1,   10, r"    \<\w+\>.*\.py:\d+[ ]+"),
+    (0, 10, r"    \<\w+\>.*\.py:\d+[ ]+"),
+    (1, 10, r"    \<\w+\>.*\.py:\d+[ ]+"),
     (0, 1000, r"    .*\.py:\d+[ ]+"),
     (1, 1000, r"    .*\.py:\d+[ ]+"),
 ]
@@ -101,7 +101,7 @@ FORMATTING_TEST_CASES = [
 def test_formatting(fixture_index, term_width, pathsep_re, env_setup):
     trace_str = test.fixtures.ALL_TRACEBACK_STRS[fixture_index]
     for traceback in parsing.parse_tracebacks(trace_str):
-        ctx    = formatting._init_entries_context(traceback.entries, term_width=term_width)
+        ctx = formatting._init_entries_context(traceback.entries, term_width=term_width)
         tb_str = formatting._format_traceback(ctx, traceback)
 
         pathsep_offsets = []
@@ -137,7 +137,7 @@ def _ping(depth=0):
                 # raise new_ex from attr_err
                 _, exc_value, traceback = sys.exc_info()
                 assert exc_value is attr_err
-                new_ex.__cause__     = exc_value
+                new_ex.__cause__ = exc_value
                 new_ex.__traceback__ = traceback
                 raise new_ex
 
@@ -195,13 +195,13 @@ def run_max_recursion():
 def main():
     run_max_recursion()
 
-    formatting.PWD        = "/home/user/foss/myproject"
+    formatting.PWD = "/home/user/foss/myproject"
     formatting.TEST_PATHS = TEST_PATHS_WIN + TEST_PATHS_UNIX
-    trace_strs            = test.fixtures.ALL_TRACEBACK_STRS
+    trace_strs = test.fixtures.ALL_TRACEBACK_STRS
 
     for trace_str in trace_strs:
         tracebacks = parsing.parse_tracebacks(trace_str)
-        tb_str     = formatting.format_tracebacks(tracebacks, color=True)
+        tb_str = formatting.format_tracebacks(tracebacks, color=True)
         print(tb_str)
         print("\n------------------------------\n")
 
@@ -216,5 +216,5 @@ def main():
         print(tb_str)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

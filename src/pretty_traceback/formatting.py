@@ -23,7 +23,7 @@ DEFAULT_COLUMNS = 80
 
 def _get_terminal_width() -> int:
     try:
-        columns = int(os.environ['COLUMNS'])
+        columns = int(os.environ["COLUMNS"])
         # lines   = int(os.environ['LINES'  ])
         return columns
     except (KeyError, ValueError):
@@ -32,7 +32,7 @@ def _get_terminal_width() -> int:
     if not sys.stdout.isatty():
         return DEFAULT_COLUMNS
 
-    if hasattr(os, 'get_terminal_size'):
+    if hasattr(os, "get_terminal_size"):
         try:
             size = os.get_terminal_size(0)
             return size.columns
@@ -40,7 +40,7 @@ def _get_terminal_width() -> int:
             pass
 
     try:
-        size_output = sp.check_output(['stty', 'size']).decode()
+        size_output = sp.check_output(["stty", "size"]).decode()
         _, columns = [int(val) for val in size_output.strip().split()]
         return columns
     except sp.CalledProcessError:
@@ -51,63 +51,73 @@ def _get_terminal_width() -> int:
     return DEFAULT_COLUMNS
 
 
-FMT_MODULE : str = colorama.Fore.CYAN + colorama.Style.NORMAL + "{0}" + colorama.Style.RESET_ALL
-FMT_CALL   : str = colorama.Fore.YELLOW + colorama.Style.NORMAL + "{0}" + colorama.Style.RESET_ALL
-FMT_LINENO : str = colorama.Fore.MAGENTA + colorama.Style.NORMAL + "{0}" + colorama.Style.RESET_ALL
+FMT_MODULE: str = (
+    colorama.Fore.CYAN + colorama.Style.NORMAL + "{0}" + colorama.Style.RESET_ALL
+)
+FMT_CALL: str = (
+    colorama.Fore.YELLOW + colorama.Style.NORMAL + "{0}" + colorama.Style.RESET_ALL
+)
+FMT_LINENO: str = (
+    colorama.Fore.MAGENTA + colorama.Style.NORMAL + "{0}" + colorama.Style.RESET_ALL
+)
 FMT_CONTEXT: str = "{0}"
 
-FMT_ERROR_NAME: str = colorama.Fore.RED + colorama.Style.BRIGHT + "{0}" + colorama.Style.RESET_ALL
-FMT_ERROR_MSG : str = colorama.Style.BRIGHT + "{0}" + colorama.Style.RESET_ALL
+FMT_ERROR_NAME: str = (
+    colorama.Fore.RED + colorama.Style.BRIGHT + "{0}" + colorama.Style.RESET_ALL
+)
+FMT_ERROR_MSG: str = colorama.Style.BRIGHT + "{0}" + colorama.Style.RESET_ALL
 
 
 class Row(typ.NamedTuple):
 
-    alias       : str
+    alias: str
     short_module: str
-    full_module : str
-    call        : str
-    lineno      : str
-    context     : str
+    full_module: str
+    call: str
+    lineno: str
+    context: str
 
 
 class PaddedRow(typ.NamedTuple):
 
-    alias       : str
+    alias: str
     short_module: str
-    full_module : str
-    call        : str
-    lineno      : str
-    context     : str
+    full_module: str
+    call: str
+    lineno: str
+    context: str
 
 
-Alias  = str
+Alias = str
 Prefix = str
 
-AliasPrefix   = typ.Tuple[Alias, Prefix]
+AliasPrefix = typ.Tuple[Alias, Prefix]
 AliasPrefixes = typ.List[AliasPrefix]
 
 
 class Context(typ.NamedTuple):
 
-    rows   : typ.List[Row]
+    rows: typ.List[Row]
     aliases: AliasPrefixes
 
     max_row_width: int
-    is_wide_mode : bool
+    is_wide_mode: bool
 
     # for paddings
     max_short_module_len: int
-    max_full_module_len : int
+    max_full_module_len: int
 
-    max_lineno_len : int
-    max_call_len   : int
+    max_lineno_len: int
+    max_call_len: int
     max_context_len: int
 
 
 def _iter_entry_paths(entries: com.Entries) -> typ.Iterable[str]:
     for entry in entries:
-        module_abspath   = os.path.abspath(entry.module)
-        is_valid_abspath = module_abspath != entry.module and os.path.exists(module_abspath)
+        module_abspath = os.path.abspath(entry.module)
+        is_valid_abspath = module_abspath != entry.module and os.path.exists(
+            module_abspath
+        )
         if is_valid_abspath:
             yield module_abspath
         else:
@@ -162,7 +172,7 @@ def _iter_alias_prefixes(entry_paths: typ.List[str]) -> typ.Iterable[AliasPrefix
             elif re.search(r"lib/Python\d.\d+\\lib$", py_path):
                 alias = "<py>"
             elif py_path.startswith(PWD):
-                alias   = "<pwd>"
+                alias = "<pwd>"
                 py_path = PWD
             else:
                 alias = f"<p{alias_index}>"
@@ -175,8 +185,8 @@ def _iter_entry_rows(
     aliases: AliasPrefixes, entry_paths: typ.List[str], entries: com.Entries
 ) -> typ.Iterable[Row]:
     for abs_module, entry in zip(entry_paths, entries):
-        used_alias   = ""
-        module_full  = abs_module
+        used_alias = ""
+        module_full = abs_module
         module_short = abs_module
 
         module = entry.module
@@ -193,7 +203,7 @@ def _iter_entry_rows(
                     new_len = len(new_module_short) + len(alias)
                     old_len = len(module_short) + len(used_alias)
                     if new_len < old_len:
-                        used_alias   = alias
+                        used_alias = alias
                         module_short = new_module_short
 
         yield Row(
@@ -206,14 +216,16 @@ def _iter_entry_rows(
         )
 
 
-def _init_entries_context(entries: com.Entries, term_width: typ.Optional[int] = None) -> Context:
+def _init_entries_context(
+    entries: com.Entries, term_width: typ.Optional[int] = None
+) -> Context:
     if term_width is None:
         _term_width = _get_terminal_width()
     else:
         _term_width = term_width
 
     entry_paths = list(_iter_entry_paths(entries))
-    aliases     = list(_iter_alias_prefixes(entry_paths))
+    aliases = list(_iter_alias_prefixes(entry_paths))
 
     # NOTE (mb 2020-10-04): When calculating widths of a column, we care more
     #   about alignment than staying below the max_row_width. The limits are
@@ -226,22 +238,26 @@ def _init_entries_context(entries: com.Entries, term_width: typ.Optional[int] = 
     rows = list(_iter_entry_rows(aliases, entry_paths, entries))
 
     if rows:
-        max_short_module_len = max(len(row.alias) + len(row.short_module) for row in rows)
-        max_full_module_len  = max(len(row.full_module) for row in rows)
+        max_short_module_len = max(
+            len(row.alias) + len(row.short_module) for row in rows
+        )
+        max_full_module_len = max(len(row.full_module) for row in rows)
 
-        max_lineno_len  = max(len(row.lineno) for row in rows)
-        max_call_len    = max(len(row.call) for row in rows)
+        max_lineno_len = max(len(row.lineno) for row in rows)
+        max_call_len = max(len(row.call) for row in rows)
         max_context_len = max(len(row.context) for row in rows)
     else:
         max_short_module_len = 0
-        max_full_module_len  = 0
+        max_full_module_len = 0
 
-        max_lineno_len  = 0
-        max_call_len    = 0
+        max_lineno_len = 0
+        max_call_len = 0
         max_context_len = 0
 
-    max_total_len = max_full_module_len + max_lineno_len + max_call_len + max_context_len
-    is_wide_mode  = max_total_len < max_row_width
+    max_total_len = (
+        max_full_module_len + max_lineno_len + max_call_len + max_context_len
+    )
+    is_wide_mode = max_total_len < max_row_width
 
     return Context(
         rows,
@@ -263,13 +279,15 @@ def _padded_rows(ctx: Context) -> typ.Iterable[PaddedRow]:
     for row in ctx.rows:
         if ctx.is_wide_mode:
             short_module = ""
-            full_module  = row.full_module.ljust(ctx.max_full_module_len)
+            full_module = row.full_module.ljust(ctx.max_full_module_len)
         else:
-            short_module = row.short_module.ljust(ctx.max_short_module_len - len(row.alias))
-            full_module  = ""
+            short_module = row.short_module.ljust(
+                ctx.max_short_module_len - len(row.alias)
+            )
+            full_module = ""
 
         # the max lengths are calculated upstream in `_init_entries_context`
-        padded_call   = row.call.ljust(ctx.max_call_len)
+        padded_call = row.call.ljust(ctx.max_call_len)
         padded_lineno = row.lineno.ljust(ctx.max_lineno_len)
 
         yield PaddedRow(
@@ -293,9 +311,9 @@ def _aliases_to_lines(ctx: Context, color: bool = False) -> typ.Iterable[str]:
 def _rows_to_lines(rows: typ.List[PaddedRow], color: bool = False) -> typ.Iterable[str]:
 
     # apply colors and additional separators/ spacing
-    fmt_module  = FMT_MODULE if color else "{0}"
-    fmt_call    = FMT_CALL if color else "{0}"
-    fmt_lineno  = FMT_LINENO if color else "{0}"
+    fmt_module = FMT_MODULE if color else "{0}"
+    fmt_call = FMT_CALL if color else "{0}"
+    fmt_lineno = FMT_LINENO if color else "{0}"
     fmt_context = FMT_CONTEXT if color else "{0}"
 
     # padding has already been added to the components at this point
@@ -308,9 +326,11 @@ def _rows_to_lines(rows: typ.List[PaddedRow], color: bool = False) -> typ.Iterab
             module = full_module
 
         # append line number to file so editors can jump to the line
-        bare_module    = module.strip()
-        bare_lineno    = lineno.strip()
-        module_padding = " " * (len(module) - len(bare_module) + len(lineno) - len(bare_lineno))
+        bare_module = module.strip()
+        bare_lineno = lineno.strip()
+        module_padding = " " * (
+            len(module) - len(bare_module) + len(lineno) - len(bare_lineno)
+        )
 
         parts = (
             "    ",
@@ -337,14 +357,16 @@ def _rows_to_lines(rows: typ.List[PaddedRow], color: bool = False) -> typ.Iterab
 def _traceback_to_entries(traceback: types.TracebackType) -> typ.Iterable[com.Entry]:
     summary = tb.extract_tb(traceback)
     for entry in summary:
-        module  = entry[0]
-        call    = entry[2]
-        lineno  = str(entry[1])
+        module = entry[0]
+        call = entry[2]
+        lineno = str(entry[1])
         context = entry[3] or ""
         yield com.Entry(module, call, lineno, context)
 
 
-def _format_traceback(ctx: Context, traceback: com.Traceback, color: bool = False) -> str:
+def _format_traceback(
+    ctx: Context, traceback: com.Traceback, color: bool = False
+) -> str:
     padded_rows = list(_padded_rows(ctx))
 
     lines = []
@@ -355,7 +377,7 @@ def _format_traceback(ctx: Context, traceback: com.Traceback, color: bool = Fals
     lines.append(com.TRACEBACK_HEAD)
     lines.extend(_rows_to_lines(padded_rows, color))
 
-    if traceback.exc_name == 'RecursionError' and len(lines) > 100:
+    if traceback.exc_name == "RecursionError" and len(lines) > 100:
         prelude_index = 0
 
         line_counts: typ.Dict[str, int] = collections.defaultdict(int)
@@ -367,10 +389,14 @@ def _format_traceback(ctx: Context, traceback: com.Traceback, color: bool = Fals
 
         if prelude_index > 0:
             num_omitted = len(lines) - prelude_index - 2
-            lines       = lines[:prelude_index] + [f"    ... {num_omitted} omitted lines"] + lines[-2:]
+            lines = (
+                lines[:prelude_index]
+                + [f"    ... {num_omitted} omitted lines"]
+                + lines[-2:]
+            )
 
     fmt_error_name = FMT_ERROR_NAME if color else "{0}"
-    error_line     = fmt_error_name.format(traceback.exc_name)
+    error_line = fmt_error_name.format(traceback.exc_name)
     if traceback.exc_msg:
         fmt_error_msg = FMT_ERROR_MSG if color else "{0}"
         error_line += ": " + fmt_error_msg.format(traceback.exc_msg)
@@ -402,13 +428,13 @@ def format_tracebacks(tracebacks: typ.List[com.Traceback], color: bool = False) 
 
 
 def get_tb_attr(ex: BaseException) -> types.TracebackType:
-    return typ.cast(types.TracebackType, getattr(ex, '__traceback__', None))
+    return typ.cast(types.TracebackType, getattr(ex, "__traceback__", None))
 
 
 def exc_to_traceback_str(
     exc_value: BaseException,
     traceback: types.TracebackType,
-    color    : bool = False,
+    color: bool = False,
 ) -> str:
     # NOTE (mb 2020-08-13): wrt. cause vs context see
     #   https://www.python.org/dev/peps/pep-3134/#enhanced-reporting
@@ -419,8 +445,8 @@ def exc_to_traceback_str(
     cur_traceback: types.TracebackType = traceback
 
     while cur_exc_value:
-        next_cause   = getattr(cur_exc_value, '__cause__', None)
-        next_context = getattr(cur_exc_value, '__context__', None)
+        next_cause = getattr(cur_exc_value, "__cause__", None)
+        next_context = getattr(cur_exc_value, "__context__", None)
 
         tb_tup = com.Traceback(
             exc_name=type(cur_exc_value).__name__,

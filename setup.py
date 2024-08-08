@@ -52,6 +52,7 @@ classifiers = [
 
 try:
     import lib3to6
+
     distclass = lib3to6.Distribution
 except ImportError:
     distclass = setuptools.dist.Distribution
@@ -68,7 +69,6 @@ setuptools.setup(
     description="Human readable stacktraces.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-
     distclass=distclass,
     packages=setuptools.find_packages("src/"),
     package_dir={"": "src"},
