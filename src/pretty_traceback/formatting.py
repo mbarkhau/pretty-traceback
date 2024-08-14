@@ -144,6 +144,7 @@ def _iter_alias_prefixes(entry_paths: typ.List[str]) -> typ.Iterable[AliasPrefix
     _uniq_entry_paths = set(entry_paths)
 
     alias_index = 0
+
     for py_path in _py_paths():
         is_path_used = False
         for entry_path in list(_uniq_entry_paths):
@@ -151,24 +152,30 @@ def _iter_alias_prefixes(entry_paths: typ.List[str]) -> typ.Iterable[AliasPrefix
                 is_path_used = True
                 _uniq_entry_paths.remove(entry_path)
 
-        if is_path_used:
-            # TODO (mb 2020-08-16): more betterer paths
-            if py_path.endswith("site-packages"):
-                alias = "<sitepkg>"
-            elif py_path.endswith("dist-packages"):
-                alias = "<distpkg>"
-            elif re.search(r"lib/python\d.\d+$", py_path):
-                alias = "<py>"
-            elif re.search(r"lib/Python\d.\d+\\lib$", py_path):
-                alias = "<py>"
-            elif py_path.startswith(PWD):
-                alias   = "<pwd>"
-                py_path = PWD
-            else:
-                alias = f"<p{alias_index}>"
-                alias_index += 1
+        if not is_path_used:
+            continue
+        
+        # end paths with a slash to ensure the relative path does not start with / when outputted to the terminal
+        # this ensures any terminal tooling which opens files using a relative path works properly
+        # py_path += "/"
 
-            yield (alias, py_path)
+        # TODO (mb 2020-08-16): more betterer paths
+        if py_path.endswith("site-packages"):
+            alias = "<site>"
+        elif py_path.endswith("dist-packages"):
+            alias = "<dist>"
+        elif re.search(r"lib/python\d.\d+$", py_path):
+            alias = "<py>"
+        elif re.search(r"lib/Python\d.\d+\\lib$", py_path):
+            alias = "<py>"
+        elif py_path.startswith(PWD):
+            alias   = "<pwd>"
+            # py_path = PWD
+        else:
+            alias = f"<p{alias_index}>"
+            alias_index += 1
+
+        yield (alias, py_path + "/")
 
 
 def _iter_entry_rows(
@@ -188,7 +195,7 @@ def _iter_entry_rows(
         if abs_module.endswith(module):
             for alias, alias_path in aliases:
                 if abs_module.startswith(alias_path):
-                    new_module_short = abs_module[len(alias_path) :]
+                    new_module_short = abs_module[len(alias_path):]
 
                     new_len = len(new_module_short) + len(alias)
                     old_len = len(module_short) + len(used_alias)
