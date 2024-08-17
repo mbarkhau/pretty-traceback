@@ -1,7 +1,7 @@
 # This file is part of the pretty-traceback project
 # https://github.com/mbarkhau/pretty-traceback
 #
-# Copyright (c) 2020-2023 Manuel Barkhau (mbarkhau@gmail.com) - MIT License
+# Copyright (c) 2020-2024 Manuel Barkhau (mbarkhau@gmail.com) - MIT License
 # SPDX-License-Identifier: MIT
 
 import re
