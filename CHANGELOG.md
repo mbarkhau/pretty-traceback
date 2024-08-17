@@ -1,8 +1,15 @@
 # Changelog for https://github.com/mbarkhau/pretty-traceback
 
+## 2024.1021
+
+- Update: Avoid leading / on relative paths. [gh#13][gh13]
+
+[gh13]: https://github.com/mbarkhau/pretty-traceback/pull/13
+
+
 ## 2023.1020
 
-- Fix: Prevent errors in non-tty environments [gh#8][gh8]
+- Fix: Prevent errors in non-tty environments [gh#9][gh9]
 
 [gh9]: https://github.com/mbarkhau/pretty-traceback/issues/9
 
