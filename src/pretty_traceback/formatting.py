@@ -140,10 +140,8 @@ def _py_paths() -> typ.List[str]:
     return paths
 
 
-def _iter_alias_prefixes(entry_paths: typ.List[str]) -> typ.Iterable[AliasPrefix]:
+def _iter_used_py_paths(entry_paths: typ.List[str]) -> typ.Iterable[str]:
     _uniq_entry_paths = set(entry_paths)
-
-    alias_index = 0
 
     for py_path in _py_paths():
         is_path_used = False
@@ -152,14 +150,14 @@ def _iter_alias_prefixes(entry_paths: typ.List[str]) -> typ.Iterable[AliasPrefix
                 is_path_used = True
                 _uniq_entry_paths.remove(entry_path)
 
-        if not is_path_used:
-            continue
-        
-        # end paths with a slash to ensure the relative path does not start with / when outputted to the terminal
-        # this ensures any terminal tooling which opens files using a relative path works properly
-        # py_path += "/"
+        if is_path_used:
+            yield py_path
 
-        # TODO (mb 2020-08-16): more betterer paths
+
+def _iter_alias_prefixes(entry_paths: typ.List[str]) -> typ.Iterable[AliasPrefix]:
+    alias_index = 0
+
+    for py_path in _iter_used_py_paths(entry_paths):
         if py_path.endswith("site-packages"):
             alias = "<site>"
         elif py_path.endswith("dist-packages"):
@@ -170,12 +168,18 @@ def _iter_alias_prefixes(entry_paths: typ.List[str]) -> typ.Iterable[AliasPrefix
             alias = "<py>"
         elif py_path.startswith(PWD):
             alias   = "<pwd>"
-            # py_path = PWD
+            py_path = PWD
         else:
             alias = f"<p{alias_index}>"
             alias_index += 1
 
-        yield (alias, py_path + "/")
+        # Always end paths with a slash. This way relative paths don't
+        # start with a / and tooling can open files (e.g. Ctrl+Click),
+        # which would otherwise be parsed as absolute paths.
+        if not py_path.endswith("/"):
+            py_path = py_path + "/"
+
+        yield (alias, py_path)
 
 
 def _iter_entry_rows(
@@ -195,7 +199,7 @@ def _iter_entry_rows(
         if abs_module.endswith(module):
             for alias, alias_path in aliases:
                 if abs_module.startswith(alias_path):
-                    new_module_short = abs_module[len(alias_path):]
+                    new_module_short = abs_module[len(alias_path) :]
 
                     new_len = len(new_module_short) + len(alias)
                     old_len = len(module_short) + len(used_alias)
