@@ -16,7 +16,7 @@ from pretty_traceback import formatting
 
 def init_excepthook(color: bool) -> typ.Callable:
     def excepthook(
-        exc_type : typ.Type[BaseException],
+        exc_type: typ.Type[BaseException],
         exc_value: BaseException,
         traceback: types.TracebackType,
     ) -> None:
@@ -35,20 +35,28 @@ def init_excepthook(color: bool) -> typ.Callable:
 
 
 def install(
-    envvar                         : typ.Optional[str] = None,
-    color                          : bool = True,
-    only_tty                       : bool = True,
+    envvar: typ.Optional[str] = None,
+    color: bool = True,
+    only_tty: bool = True,
     only_hook_if_default_excepthook: bool = True,
 ) -> None:
     """Hook the current excepthook to the pretty_traceback.
 
     If you set `only_tty=False`, pretty_traceback will always
     be active even when stdout is piped or redirected.
+
+    Color output respects the NO_COLOR environment variable
+    (https://no-color.org/). If NO_COLOR is set (regardless of
+    its value), color output will be disabled.
     """
-    if envvar and os.environ.get(envvar, "0") == '0':
+    if envvar and os.environ.get(envvar, "0") == "0":
         return
 
-    isatty = getattr(sys.stderr, 'isatty', lambda: False)
+    # Respect NO_COLOR environment variable
+    if "NO_COLOR" in os.environ:
+        color = False
+
+    isatty = getattr(sys.stderr, "isatty", lambda: False)
     if only_tty and not isatty():
         return
 
