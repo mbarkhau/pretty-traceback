@@ -99,6 +99,13 @@ except ImportError:
 
 Note, that the hook is only installed if the existing hook is the default. Any existing hooks that were installed before the call of `pretty_traceback.install` will be left in place.
 
+## IPython Integration
+
+The `pretty_traceback` package also provides a `IPython` extension:
+
+```shell
+%load_ext pretty_traceback
+```
 
 ## LoggingFormatter
 
@@ -193,3 +200,4 @@ Pretty Traceback is heavily inspired by the backtrace module by [nir0s](https://
 |                 Name                |        role       |  since  | until |
 |-------------------------------------|-------------------|---------|-------|
 | Manuel Barkhau (mbarkhau@gmail.com) | author/maintainer | 2020-08 | -     |
+| Michael Bianco (mike@mikebian.co) | author/maintainer | 2024-01 | -     |
