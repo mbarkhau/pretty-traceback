@@ -7,7 +7,7 @@ keywords = ["traceback", "stacktrace", "pretty"]
 readme = "README.md"
 requires-python = ">=2.7"
 
-license = { text = "MIT" }
+license = "MIT"
 license-files = ["LICENSE"]
 authors = [
     { name = "Manuel Barkhau", email = "mbarkhau@gmail.com" },
