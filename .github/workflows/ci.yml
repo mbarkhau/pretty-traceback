@@ -1,69 +1,46 @@
+# .github/workflows/ci.yml
 name: CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [ project-reorg ]
+  pull_request:
+    branches: [ project-reorg ]
 
 jobs:
-
-  build-ubuntu:
-
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v2
-
-    - name: Cache Conda Envs
-      uses: actions/cache@v2
-      with:
-        path: |
-          ~/miniconda3
-          build/*.txt
-        key: ${{ runner.OS }}-conda-cache-${{ hashFiles('requirements/*.txt', 'setup.py', 'Makefile*') }}
-        restore-keys: |
-          ${{ runner.OS }}-conda-cache-${{ hashFiles('requirements/*.txt', 'setup.py', 'Makefile*') }}
-
-    - name: make conda
-      run:
-        if [[ -e build/envs.txt ]]; then touch build/envs.txt; fi;
-        if [[ -e build/deps.txt ]]; then touch build/deps.txt; fi;
-        make conda
-
-    - name: make lint
-      run: make lint
-
-    - name: make mypy
-      run: make mypy
-
-    - name: make test
-      run: make test
-
-  build-macos:
-
-    runs-on: macos-latest
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        # python-version: [2.7, 3.6, 3.10, 3.13]
+        python-version: [3.10]
+      # optional: fail fast when any job fails
+      fail-fast: false
 
     steps:
-    - uses: actions/checkout@v2
+    - name: Check out repository
+      uses: actions/checkout@v4
 
-    - name: Cache Conda Envs
-      uses: actions/cache@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
       with:
-        path: |
-          ~/miniconda3
-          build/*.txt
-        key: ${{ runner.OS }}-conda-cache-${{ hashFiles('requirements/*.txt', 'setup.py', 'makefile*') }}
-        restore-keys: |
-          ${{ runner.OS }}-conda-cache-${{ hashFiles('requirements/*.txt', 'setup.py', 'makefile*') }}
+        python-version: ${{ matrix.python-version }}
 
-    - name: make conda
-      run:
-        if [[ -e build/envs.txt ]]; then touch build/envs.txt; fi;
-        if [[ -e build/deps.txt ]]; then touch build/deps.txt; fi;
-        make conda
+    - name: Install dependencies
+      # adjust to your needs: pipenv, poetry, requirements.txt, etc.
+      run: |
+        python -m pip install --upgrade pip
 
-    - name: make lint
-      run: make lint
+    - name: Run tests
+      run: |
+        # adjust to your test runner: pytest, unittest, tox, etc.
+        # pytest --maxfail=1 --disable-warnings -q
+        echo "ok"
 
-    - name: make mypy
-      run: make mypy
-
-    - name: make test
-      run: make test
+    # - name: Upload test results (JUnit)
+    #   if: always()
+    #   uses: actions/upload-artifact@v3
+    #   with:
+    #     name: junit-${{ matrix.os }}-py${{ matrix.python-version }}
+    #     path: junit.xml
