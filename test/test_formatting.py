@@ -97,7 +97,7 @@ def test_formatting(fixture_index, term_width, pathsep_re, env_setup):
 
         pathsep_offsets = []
 
-        tb_lines = tb_str.split(common.TRACEBACK_HEAD)[-1].strip("\n").splitlines()[:-1]
+        tb_lines = tb_str.split(common.TRACEBACK_HEAD)[-1].strip(os.linesep).splitlines()[:-1]
         for line in tb_lines:
             assert line.startswith("    "), repr(line)
 
