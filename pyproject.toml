@@ -1,11 +1,11 @@
 [project]
-name = "pretty-traceback"
+name = "pretty-traceback2"
 version = "2024.1021"
 description = "Human readable stacktraces."
 keywords = ["traceback", "stacktrace", "pretty"]
 
 readme = "README.md"
-requires-python = ">=2.7"
+requires-python = ">=3.6"
 
 license = "MIT"
 license-files = ["LICENSE"]
@@ -24,7 +24,6 @@ classifiers = [
     "Operating System :: MacOS :: MacOS X",
     "Operating System :: Microsoft :: Windows",
     "Programming Language :: Python",
-    "Programming Language :: Python :: 2",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Python :: Implementation :: PyPy",
@@ -34,8 +33,7 @@ classifiers = [
 
 
 dependencies = [
-    "colorama<0.4,>=0.3.9;python_version<3.6",
-    "colorama>=0.4;python_version>=3.6",
+    "colorama>=0.4",
 ]
 
 [project.urls]
@@ -45,3 +43,33 @@ Homepage = "https://github.com/mbarkhau/pretty-traceback"
 [build-system]
 requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[bumpver]
+current_version = 2024.1021
+version_pattern = "YYYY.BUILD[-PYTAGNUM]"
+commit = true
+tag = true
+push = true
+
+[bumpver.file_patterns]
+"bootstrapit.sh" = [
+    'PACKAGE_VERSION="{version}"'
+]
+"setup.cfg" = [
+    'current_version = {version}'
+]
+"setup.py" = [
+    'version="{version}"'
+]
+"src/pretty_traceback/*.py" = [
+    'Copyright (c) 2020-YYYY Manuel Barkhau'
+]
+"src/pretty_traceback/__init__.py" = [
+    '__version__ = "{version}"'
+]
+"README.md" = [
+    '\[CalVer {version}\]',
+    'https://img.shields.io/static/v1.svg?label=CalVer&message={version}&color=blue',
+]
+
+
