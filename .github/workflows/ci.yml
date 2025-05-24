@@ -12,9 +12,20 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: ['2.7', '3.6', '3.10', '3.13']
-      fail-fast: true
+        os: [ubuntu-18.04, ubuntu-latest, macos-latest, windows-latest]
+        # python-version: ['2.7', '3.6', '3.13']
+        python-version: ['2.7', '3.6', '3.13']
+
+        exclude:
+          - os: ubuntu-18.04
+            python-version: ['3.13']
+          - os: ubuntu-latest
+            python-version: ['2.7', '3.6']
+          - os: macos-latest
+            python-version: ['2.7', '3.6']
+          - os: windows-latest
+            python-version: ['2.7', '3.6']
+      fail-fast: false
 
     steps:
     - name: Check out repository
