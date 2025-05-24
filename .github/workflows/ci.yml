@@ -38,7 +38,7 @@ jobs:
 
     - name: Run tests
       run: |
-      PYTHONPATH=src/ uv run python -m pytest test/ src/
+        PYTHONPATH=src/ uv run python -m pytest test/ src/
 
     # - name: Upload test results (JUnit)
     #   if: always()
