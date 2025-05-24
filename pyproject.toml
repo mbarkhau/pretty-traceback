@@ -7,8 +7,7 @@ keywords = ["traceback", "stacktrace", "pretty"]
 readme = "README.md"
 requires-python = ">=3.6"
 
-license = "MIT"
-license-files = ["LICENSE"]
+license = { text = "MIT", file = "LICENSE" }
 authors = [
     { name = "Manuel Barkhau", email = "mbarkhau@gmail.com" },
 ]
@@ -40,12 +39,8 @@ dependencies = [
 Homepage = "https://github.com/mbarkhau/pretty-traceback"
 
 
-[build-system]
-requires = ["setuptools>=61.0", "wheel"]
-build-backend = "setuptools.build_meta"
-
 [bumpver]
-current_version = 2024.1021
+current_version = "2024.1021"
 version_pattern = "YYYY.BUILD[-PYTAGNUM]"
 commit = true
 tag = true
@@ -55,16 +50,14 @@ push = true
 "bootstrapit.sh" = [
     'PACKAGE_VERSION="{version}"'
 ]
-"setup.cfg" = [
-    'current_version = {version}'
+"pyproject.toml" = [
+    'version = "{version}"',
+    'current_version = "{version}"',
 ]
-"setup.py" = [
-    'version="{version}"'
-]
-"src/pretty_traceback/*.py" = [
+"src/pretty_traceback2/*.py" = [
     'Copyright (c) 2020-YYYY Manuel Barkhau'
 ]
-"src/pretty_traceback/__init__.py" = [
+"src/pretty_traceback2/__init__.py" = [
     '__version__ = "{version}"'
 ]
 "README.md" = [
@@ -73,3 +66,6 @@ push = true
 ]
 
 
+# [build-system]
+# requires = ["setuptools>=61.0", "wheel"]
+# build-backend = "setuptools.build_meta"
