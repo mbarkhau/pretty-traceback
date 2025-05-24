@@ -13,10 +13,8 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        # python-version: ['2.7', '3.6', '3.10', '3.13']
-        python-version: ['3.10']
-      # optional: fail fast when any job fails
-      fail-fast: false
+        python-version: ['2.7', '3.6', '3.10', '3.13']
+      fail-fast: true
 
     steps:
     - name: Check out repository
@@ -30,6 +28,8 @@ jobs:
     - name: Install dependencies
       # adjust to your needs: pipenv, poetry, requirements.txt, etc.
       run: |
+        which python
+        python --version
         python -m pip install --upgrade pip
 
     - name: Run tests
