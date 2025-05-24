@@ -30,21 +30,15 @@ jobs:
       with:
         version: "latest"
         python-version: ${{ matrix.python-version }}
-        enable-cache: true
 
     - name: Install dependencies
-      # adjust to your needs: pipenv, poetry, requirements.txt, etc.
       run: |
-        which python
-        which uv
         uv run python --version
-        uv run python -m pip install --upgrade pip
+        uv pip install ruff pyrefly pytest
 
     - name: Run tests
       run: |
-        # adjust to your test runner: pytest, unittest, tox, etc.
-        # pytest --maxfail=1 --disable-warnings -q
-        echo "ok"
+      PYTHONPATH=src/ uv run python -m pytest test/ src/
 
     # - name: Upload test results (JUnit)
     #   if: always()

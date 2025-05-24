@@ -7,7 +7,8 @@ keywords = ["traceback", "stacktrace", "pretty"]
 readme = "README.md"
 requires-python = ">=3.6"
 
-license = { text = "MIT", file = "LICENSE" }
+license = "MIT"
+
 authors = [
     { name = "Manuel Barkhau", email = "mbarkhau@gmail.com" },
 ]
@@ -17,7 +18,6 @@ classifiers = [
     "Environment :: Console",
     "Environment :: Other Environment",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: Unix",
     "Operating System :: POSIX",
     "Operating System :: MacOS :: MacOS X",
@@ -47,9 +47,6 @@ tag = true
 push = true
 
 [bumpver.file_patterns]
-"bootstrapit.sh" = [
-    'PACKAGE_VERSION="{version}"'
-]
 "pyproject.toml" = [
     'version = "{version}"',
     'current_version = "{version}"',
@@ -69,3 +66,6 @@ push = true
 # [build-system]
 # requires = ["setuptools>=61.0", "wheel"]
 # build-backend = "setuptools.build_meta"
+
+[tool.pyrefly]
+project_includes = ["src/pretty_traceback2/*"]

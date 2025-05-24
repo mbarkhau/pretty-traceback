@@ -7,7 +7,7 @@
 import re
 import typing as typ
 
-import pretty_traceback.common as com
+import pretty_traceback2.common as com
 
 # TODO (mb 2020-08-12): path/module with doublequotes in them.
 #   Not even sure what python does with that.
@@ -67,7 +67,7 @@ def _iter_tracebacks(trace: str) -> typ.Iterable[com.Traceback]:
             i += 1
             continue
 
-        is_caused  = False
+        is_caused = False
         is_context = False
 
         if line.startswith(com.CAUSE_HEAD):
@@ -96,7 +96,7 @@ def _iter_tracebacks(trace: str) -> typ.Iterable[com.Traceback]:
             exc_name, exc_msg = exc_line.split(": ", 1)
         else:
             exc_name = exc_line
-            exc_msg  = ""
+            exc_msg = ""
 
         entries = list(_parse_entries(entry_lines))
         yield com.Traceback(

@@ -1,10 +1,4 @@
-# -*- coding: utf-8 -*-
-from __future__ import division
-from __future__ import print_function
-from __future__ import absolute_import
-from __future__ import unicode_literals
-
-import pretty_traceback.common as com
+import pretty_traceback2.common as com
 
 BASIC_TRACEBACK_STR = """
 Traceback (most recent call last):
